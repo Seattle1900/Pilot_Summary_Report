@@ -147,7 +147,7 @@ p2_plot_1 <- ggplot(summary_p2 %>%
 ggplotly(p2_plot_1)
 ```
 
-### Donated, 25 Tokens, 9 Token
+### Donated, 25 Tokens, 19 Tokens
 
 ```{r message=FALSE}
 #| code-fold: true
