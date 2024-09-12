@@ -147,6 +147,34 @@ p2_plot_1 <- ggplot(summary_p2 %>%
 ggplotly(p2_plot_1)
 ```
 
+### Donated, 25 Tokens, 9 Token
+
+```{r message=FALSE}
+#| code-fold: true
+
+# Plot using ggplot2
+p2_plot_4 <- ggplot(summary_p2 %>%
+                            filter(DefaultStatus=='donated'&
+                                     BuySignal=='25 tokens'&
+                                     OverturnCondition=='19 tokens'), 
+                          aes(x = Question, y = Proportion, fill = Response)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~DefaultStatus + BuySignal + OverturnCondition, scales = "free", ncol = 3) +
+  labs(
+    title = "Donated, 25 Tokens, 19 Tokens",
+    x = "Proportion of Yes and No Responses for Each Question in Part2",
+    y = "Proportion of Responses"
+  ) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), 
+                position = position_dodge(0.9), width = 0.25) +
+  theme_minimal() +
+  scale_fill_manual(values = c("Yes" = "#00BFC4", "No" = "#F8766D")) +
+  theme(panel.spacing = unit(1.5, "lines"))
+
+# Convert ggplot to plotly
+ggplotly(p2_plot_4)
+```
+
 ### Donated, 75 Tokens, 1 Token
 
 ```{r message=FALSE}
