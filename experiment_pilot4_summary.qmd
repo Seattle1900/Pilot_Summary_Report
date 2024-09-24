@@ -926,7 +926,7 @@ print(strong_consent_plot)
 
 ## Deeper Data Cleaning
 
-In this section, we remove participants who send signals in Part 2 1) when the BuySignal is 75 tokens, 2) when the DefaultStatus is donated, BuySignal is 25 tokens, and they are wug donor, and 3) when the DefaultStatus is not donated, BuySignal is 25 tokens, and they are wug non-donor.
+In this section, we remove participants who send signals in Part 2, 1) when the DefaultStatus is donated, and they are wug donor, and 3) when the DefaultStatus is not donated, and they are wug non-donor.
 
 ```{r}
 #| code-fold: true
