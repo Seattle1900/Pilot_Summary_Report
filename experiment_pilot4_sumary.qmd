@@ -141,7 +141,6 @@ summary_p2$Response <- factor(summary_p2$Response, levels = c("1", "2"), labels 
 ```
 
 ::: panel-tabset
-
 ### Donated, 25 Tokens, 1 Token
 
 ```{r message=FALSE}
@@ -365,7 +364,6 @@ p2_plot_7 <- ggplot(summary_p2 %>%
 # Convert ggplot to plotly
 ggplotly(p2_plot_7)
 ```
-
 :::
 
 ## Summary of Part 3
@@ -785,7 +783,6 @@ donation_rate_screen6_plot <- ggplot(summary_screen6, aes(x = interaction(Defaul
 
 ggplotly(donation_rate_screen6_plot)
 ```
-
 :::
 
 ### Summary Heatmap of Part3
@@ -852,7 +849,6 @@ summary_screen <- summary_screen %>%
 ```
 
 ::: panel-tabset
-
 ### Weak Consent Heat Map
 
 ```{r}
@@ -926,7 +922,6 @@ strong_consent_plot <- ggplot(summary_strongconsent, aes(x = BuySignal, y = Trea
 
 print(strong_consent_plot)
 ```
-
 :::
 
 ## Deeper Data Cleaning
@@ -971,7 +966,7 @@ high_cost_people <- pilot_data_cleaned %>%
    filter(BuySignal == "75 tokens" & signal_sent == 1) %>%
    select(pid, DefaultStatus, BuySignal, wug_role, p2_q1, p2_q2, p2_q3, signal_sent)
 
-high_cost_people.write_csv("high_cost_people.csv")
+write.csv(high_cost_people, "high_cost_people.csv")
 
 ```
 
@@ -1035,7 +1030,6 @@ summary_p2_cleaned$Response <- factor(summary_p2_cleaned$Response, levels = c("1
 ```
 
 ::: panel-tabset
-
 ### Donated, 25 Tokens, 1 Token
 
 ```{r message=FALSE}
@@ -1259,7 +1253,6 @@ p2_plot_7_cleaned <- ggplot(summary_p2_cleaned %>%
 # Convert ggplot to plotly
 ggplotly(p2_plot_7_cleaned)
 ```
-
 :::
 
 ## Summary of Part 3 for Cleaned Data
@@ -1679,7 +1672,6 @@ donation_rate_screen6_plot_cleaned <- ggplot(summary_screen6_cleaned, aes(x = in
 
 ggplotly(donation_rate_screen6_plot_cleaned)
 ```
-
 :::
 
 ### Summary Heatmap of Part3 for Cleaned Data
@@ -1746,7 +1738,6 @@ summary_screen_cleaned <- summary_screen_cleaned %>%
 ```
 
 ::: panel-tabset
-
 ### Weak Consent Heat Map
 
 ```{r}
@@ -1820,6 +1811,4 @@ strong_consent_plot_cleaned <- ggplot(summary_strongconsent_cleaned, aes(x = Buy
 
 print(strong_consent_plot_cleaned)
 ```
-
 :::
-
