@@ -1,5 +1,5 @@
 ---
-title: "Experiment Pilot 4 Summary"
+title: "Experiment Pilot 5 Summary"
 author: "Yetong Xu"
 format: html
 editor: visual
@@ -23,10 +23,10 @@ library(stringr)
 #| code-fold: true
 
 # Import data
-pilot_data <- read_excel("Opt_Experiment_Pilot4.xlsx")
+pilot_data <- read_excel("Opt_Experiment_Pilot5.xlsx")
 
 # Keep the rows from 474 to 635
-pilot_data <- pilot_data[474:635, ]
+pilot_data <- pilot_data[636:715, ]
 
 
 # payment_pilot3 <- pilot_data[-c(3:286), ]
@@ -141,6 +141,7 @@ summary_p2$Response <- factor(summary_p2$Response, levels = c("1", "2"), labels 
 ```
 
 ::: panel-tabset
+
 ### Donated, 25 Tokens, 1 Token
 
 ```{r message=FALSE}
