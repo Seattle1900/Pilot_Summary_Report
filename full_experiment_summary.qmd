@@ -1,5 +1,5 @@
 ---
-title: "Experiment Pilot 5 Summary"
+title: "Full Experiment Summary"
 author: "Yetong Xu"
 format: html
 editor: visual
@@ -23,17 +23,20 @@ library(stringr)
 #| code-fold: true
 
 # Import data
-pilot_data <- read_excel("Opt_Experiment_Pilot5.xlsx")
+pilot_data <- read_excel("Opt_Experiment_Full.xlsx")
+
+# Sort by StartDate
+pilot_data <- pilot_data[order(pilot_data$StartDate), ]
 
 # Keep the rows from 474 to 635
-pilot_data <- pilot_data[636:715, ]
+pilot_data <- pilot_data[716:1715, ]
 
 
 # payment_pilot3 <- pilot_data[-c(3:286), ]
 
 ```
 
-## Data Cleaning
+## 1. Data Cleaning
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -60,7 +63,7 @@ print(paste("The cleaned data has", nrow(pilot_data), "rows and", ncol(pilot_dat
 #write.xlsx(payment_pilot3, "payment_pilot3.xlsx")
 ```
 
-## Summary of Treatment Arms
+## 2. Summary of Treatment Arms
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -72,7 +75,7 @@ pilot_data %>%
   kable(caption = "Summary of treatment arms")
 ```
 
-## Summary of Assigned Family
+## 3. Summary of Assigned Family
 
 We find that most participants, no matter which treatment arm they are in, are assigned to the *Kandinsky* family.
 
@@ -93,7 +96,7 @@ family_summary <- pilot_data %>%
 ggplotly(family_summary)
 ```
 
-## Summary of Part 2
+## 4. Summary of Part 2
 
 ***Note:***
 
@@ -115,12 +118,12 @@ summary_p2 <- pilot_data %>%
   ) %>%
   group_by(DefaultStatus, BuySignal, OverturnCondition, WugRole) %>%
   summarise(
-    p2q1_1 = sum(p2_q1 == '1.0', na.rm = TRUE),
-    p2q1_2 = sum(p2_q1 == '2.0', na.rm = TRUE),
-    p2q2_1 = sum(p2_q2 == '1.0', na.rm = TRUE),
-    p2q2_2 = sum(p2_q2 == '2.0', na.rm = TRUE),
-    p2q3_1 = sum(p2_q3 == '1.0', na.rm = TRUE),
-    p2q3_2 = sum(p2_q3 == '2.0', na.rm = TRUE),
+    p2q1_1 = sum(p2_q1 == '1', na.rm = TRUE),
+    p2q1_2 = sum(p2_q1 == '2', na.rm = TRUE),
+    p2q2_1 = sum(p2_q2 == '1', na.rm = TRUE),
+    p2q2_2 = sum(p2_q2 == '2', na.rm = TRUE),
+    p2q3_1 = sum(p2_q3 == '1', na.rm = TRUE),
+    p2q3_2 = sum(p2_q3 == '2', na.rm = TRUE),
     n_total = n()
   ) %>%
   pivot_longer(cols = starts_with("p2q"), 
@@ -129,8 +132,8 @@ summary_p2 <- pilot_data %>%
                values_to = "Count") %>%
   mutate(
     Proportion = Count / n_total,
-    ci = purrr::map2(Count, n_total, ~binom.test(.x, .y)$conf.int),
-    #ci = purrr::map2(Count, n_total, ~prop.test(.x, .y)$conf.int),
+    #ci = purrr::map2(Count, n_total, ~binom.test(.x, .y)$conf.int),
+    ci = purrr::map2(Count, n_total, ~prop.test(.x, .y)$conf.int),
     ci_lower = purrr::map_dbl(ci, 1),
     ci_upper = purrr::map_dbl(ci, 2)
   ) %>%
@@ -142,7 +145,7 @@ summary_p2$Response <- factor(summary_p2$Response, levels = c("1", "2"), labels 
 
 ::: panel-tabset
 
-### Donated, 25 Tokens, 1 Token
+#### Donated, 25 Tokens, 1 Token
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -170,7 +173,7 @@ p2_plot_1 <- ggplot(summary_p2 %>%
 ggplotly(p2_plot_1)
 ```
 
-### Donated, 25 Tokens, 19 Tokens
+#### Donated, 25 Tokens, 19 Tokens
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -198,7 +201,7 @@ p2_plot_4 <- ggplot(summary_p2 %>%
 ggplotly(p2_plot_4)
 ```
 
-### Donated, 75 Tokens, 1 Token
+#### Donated, 75 Tokens, 1 Token
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -226,7 +229,7 @@ p2_plot_2 <- ggplot(summary_p2 %>%
 ggplotly(p2_plot_2)
 ```
 
-### Donated, 75 Tokens, 19 Tokens
+#### Donated, 75 Tokens, 19 Tokens
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -254,7 +257,7 @@ p2_plot_3 <- ggplot(summary_p2 %>%
 ggplotly(p2_plot_3)
 ```
 
-### Not Donated, 25 Tokens, 1 Token
+#### Not Donated, 25 Tokens, 1 Token
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -282,7 +285,7 @@ p2_plot_4 <- ggplot(summary_p2 %>%
 ggplotly(p2_plot_4)
 ```
 
-### Not Donated, 25 Tokens, 19 Tokens
+#### Not Donated, 25 Tokens, 19 Tokens
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -310,7 +313,7 @@ p2_plot_5 <- ggplot(summary_p2 %>%
 ggplotly(p2_plot_5)
 ```
 
-### Not Donated, 75 Tokens, 1 Token
+#### Not Donated, 75 Tokens, 1 Token
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -338,7 +341,7 @@ p2_plot_6 <- ggplot(summary_p2 %>%
 ggplotly(p2_plot_6)
 ```
 
-### Not Donated, 75 Tokens, 19 Tokens
+#### Not Donated, 75 Tokens, 19 Tokens
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -367,7 +370,9 @@ ggplotly(p2_plot_7)
 ```
 :::
 
-## Summary of Part 3
+## 5. Summary of Part 3
+
+### 5.1 Donation rates of each treatment arm across different screens
 
 In this section, I'll show the donation rates for each treatment arm.
 
@@ -378,42 +383,43 @@ In this section, I'll show the donation rates for each treatment arm.
 pilot_data <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate = sum(grepl("2.0", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate = sum(grepl("1.0", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate = sum(grepl("2", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate = sum(grepl("1", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
 # Group by DefaultStatus, BuySignal, OverturnCondition and show the donation rate for each treatment arms
-summary_p3 <- pilot_data %>%
-  group_by(DefaultStatus, BuySignal, OverturnCondition) %>%
-  summarise(
-    num_donate = sum(num_donate),
-    num_not_donate = sum(num_not_donate),
-    
-    # Calculate the donation rate
-    donation_rate = num_donate / (num_donate + num_not_donate),
-    
-    # Calculate the confidence intervals for the donation rate
-    #ci = list(prop.test(num_donate, num_donate + num_not_donate)$conf.int),
-    #ci_lower = prop.test(num_donate, num_donate + num_not_donate)$conf.int[1],
-    #ci_upper = prop.test(num_donate, num_donate + num_not_donate)$conf.int[2]
-    
-     # Calculate confidence intervals for the donation rate using binom.test()
-    ci = list(binom.test(num_donate, num_donate + num_not_donate)$conf.int),
-    ci_lower = ci[[1]][1],  # Extract lower bound
-    ci_upper = ci[[1]][2]   # Extract upper bound
-  ) %>%
-  mutate(
-    donation_rate = round(donation_rate * 100, 2),
-    ci_lower = round(ci_lower * 100, 2),
-    ci_upper = round(ci_upper * 100, 2)
-  ) %>%
-  ungroup() %>%
-  select(-ci)
+# summary_p3 <- pilot_data %>%
+#   group_by(DefaultStatus, BuySignal, OverturnCondition) %>%
+#   summarise(
+#     num_donate = sum(num_donate),
+#     num_not_donate = sum(num_not_donate),
+#     
+#     # Calculate the donation rate
+#     donation_rate = num_donate / (num_donate + num_not_donate),
+#     
+#     # Calculate the confidence intervals for the donation rate
+#     ci = list(prop.test(num_donate, num_donate + num_not_donate)$conf.int),
+#     ci_lower = prop.test(num_donate, num_donate + num_not_donate)$conf.int[1],
+#     ci_upper = prop.test(num_donate, num_donate + num_not_donate)$conf.int[2]
+#     
+#      # Calculate confidence intervals for the donation rate using binom.test()
+#     # ci = list(binom.test(num_donate, num_donate + num_not_donate)$conf.int),
+#     # ci_lower = ci[[1]][1],  # Extract lower bound
+#     # ci_upper = ci[[1]][2]   # Extract upper bound
+#   ) %>%
+#   mutate(
+#     donation_rate = round(donation_rate * 100, 2),
+#     ci_lower = round(ci_lower * 100, 2),
+#     ci_upper = round(ci_upper * 100, 2)
+#   ) %>%
+#   ungroup() %>%
+#   select(-ci)
 ```
 
 ::: panel-tabset
-### Screen 1
+
+#### Screen 1
 
 -   1 donor, 9 non-donors, with signal sent;
 
@@ -424,8 +430,8 @@ summary_p3 <- pilot_data %>%
 screen_1 <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen1 = sum(grepl("2.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen1 = sum(grepl("1.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen1 = sum(grepl("2", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen1 = sum(grepl("1", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -440,13 +446,13 @@ summary_screen1 <- screen_1 %>%
     donation_rate_screen1 = num_donate_screen1 / (num_donate_screen1 + num_not_donate_screen1),
     
     # Calculate the confidence intervals for the donation rate
-    # ci_screen1 = list(prop.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int),
-    # ci_lower_screen1 = prop.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int[1],
-    # ci_upper_screen1 = prop.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int[2]
+    ci_screen1 = list(prop.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int),
+    ci_lower_screen1 = prop.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int[1],
+    ci_upper_screen1 = prop.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int[2]
     # 
-    ci_screen1 = list(binom.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int),
-    ci_lower_screen1 = ci_screen1[[1]][1],  # Extract lower bound
-    ci_upper_screen1 = ci_screen1[[1]][2]   # Extract upper bound
+    # ci_screen1 = list(binom.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int),
+    # ci_lower_screen1 = ci_screen1[[1]][1],  # Extract lower bound
+    # ci_upper_screen1 = ci_screen1[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate_screen1 = round(donation_rate_screen1 * 100, 2),
@@ -491,7 +497,7 @@ donation_rate_screen1_plot <- ggplot(summary_screen1, aes(x = interaction(Defaul
 ggplotly(donation_rate_screen1_plot)
 ```
 
-### Screen 2
+#### Screen 2
 
 -   1 donor, 9 non-donors, without signal sent;
 
@@ -502,8 +508,8 @@ ggplotly(donation_rate_screen1_plot)
 screen_2 <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen2 = sum(grepl("2.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen2 = sum(grepl("1.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen2 = sum(grepl("2", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen2 = sum(grepl("1", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -518,13 +524,13 @@ summary_screen2 <- screen_2 %>%
     donation_rate_screen2 = num_donate_screen2 / (num_donate_screen2 + num_not_donate_screen2),
     
     # Calculate the confidence intervals for the donation rate
-    # ci_screen2 = list(prop.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int),
-    # ci_lower_screen2 = prop.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int[1],
-    # ci_upper_screen2 = prop.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int[2]
+    ci_screen2 = list(prop.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int),
+    ci_lower_screen2 = prop.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int[1],
+    ci_upper_screen2 = prop.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int[2]
     
-    ci_screen2 = list(binom.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int),
-    ci_lower_screen2 = ci_screen2[[1]][1],  # Extract lower bound
-    ci_upper_screen2 = ci_screen2[[1]][2]   # Extract upper bound
+    # ci_screen2 = list(binom.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int),
+    # ci_lower_screen2 = ci_screen2[[1]][1],  # Extract lower bound
+    # ci_upper_screen2 = ci_screen2[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate_screen2 = round(donation_rate_screen2 * 100, 2),
@@ -549,7 +555,7 @@ donation_rate_screen2_plot <- ggplot(summary_screen2, aes(x = interaction(Defaul
 ggplotly(donation_rate_screen2_plot)
 ```
 
-### Screen 3
+#### Screen 3
 
 -   5 donors, 5 non-donors, with signal sent;
 
@@ -563,8 +569,8 @@ ggplotly(donation_rate_screen2_plot)
 screen_3 <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen3 = sum(grepl("2.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen3 = sum(grepl("1.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen3 = sum(grepl("2", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen3 = sum(grepl("1", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -580,13 +586,13 @@ summary_screen3 <- screen_3 %>%
     donation_rate_screen3 = num_donate_screen3 / (num_donate_screen3 + num_not_donate_screen3),
 
     # Calculate the confidence intervals for the donation rate
-    # ci_screen3 = list(prop.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int),
-    # ci_lower_screen3 = prop.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int[1],
-    # ci_upper_screen3 = prop.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int[2]
+    ci_screen3 = list(prop.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int),
+    ci_lower_screen3 = prop.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int[1],
+    ci_upper_screen3 = prop.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int[2]
     
-    ci_screen3 = list(binom.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int),
-    ci_lower_screen3 = ci_screen3[[1]][1],  # Extract lower bound
-    ci_upper_screen3 = ci_screen3[[1]][2]   # Extract upper bound
+    # ci_screen3 = list(binom.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int),
+    # ci_lower_screen3 = ci_screen3[[1]][1],  # Extract lower bound
+    # ci_upper_screen3 = ci_screen3[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate_screen3 = round(donation_rate_screen3 * 100, 2),
@@ -611,7 +617,7 @@ donation_rate_screen3_plot <- ggplot(summary_screen3, aes(x = interaction(Defaul
 ggplotly(donation_rate_screen3_plot)
 ```
 
-### Screen 4
+#### Screen 4
 
 -   5 donors, 5 non-donors, without signal sent;
 
@@ -622,8 +628,8 @@ ggplotly(donation_rate_screen3_plot)
 screen_4 <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen4 = sum(grepl("2.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen4 = sum(grepl("1.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen4 = sum(grepl("2", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen4 = sum(grepl("1", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -638,13 +644,13 @@ summary_screen4 <- screen_4 %>%
     donation_rate_screen4 = num_donate_screen4 / (num_donate_screen4 + num_not_donate_screen4),
     
     # Calculate the confidence intervals for the donation rate
-    # ci_screen4 = list(prop.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int),
-    # ci_lower_screen4 = prop.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int[1],
-    # ci_upper_screen4 = prop.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int[2]
+    ci_screen4 = list(prop.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int),
+    ci_lower_screen4 = prop.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int[1],
+    ci_upper_screen4 = prop.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int[2]
     
-    ci_screen4 = list(binom.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int),
-    ci_lower_screen4 = ci_screen4[[1]][1],  # Extract lower bound
-    ci_upper_screen4 = ci_screen4[[1]][2]   # Extract upper bound
+    # ci_screen4 = list(binom.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int),
+    # ci_lower_screen4 = ci_screen4[[1]][1],  # Extract lower bound
+    # ci_upper_screen4 = ci_screen4[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate_screen4 = round(donation_rate_screen4 * 100, 2),
@@ -669,7 +675,7 @@ donation_rate_screen4_plot <- ggplot(summary_screen4, aes(x = interaction(Defaul
 ggplotly(donation_rate_screen4_plot)
 ```
 
-### Screen 5
+#### Screen 5
 
 -   9 donors, 1 non-donors, with signal sent;
 
@@ -680,8 +686,8 @@ ggplotly(donation_rate_screen4_plot)
 screen_5 <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen5 = sum(grepl("2.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen5 = sum(grepl("1.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen5 = sum(grepl("2", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen5 = sum(grepl("1", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -696,13 +702,13 @@ summary_screen5 <- screen_5 %>%
     donation_rate_screen5 = num_donate_screen5 / (num_donate_screen5 + num_not_donate_screen5),
     
     # Calculate the confidence intervals for the donation rate
-    # ci_screen5 = list(prop.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int),
-    # ci_lower_screen5 = prop.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int[1],
-    # ci_upper_screen5 = prop.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int[2]
+    ci_screen5 = list(prop.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int),
+    ci_lower_screen5 = prop.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int[1],
+    ci_upper_screen5 = prop.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int[2]
     
-    ci_screen5 = list(binom.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int),
-    ci_lower_screen5 = ci_screen5[[1]][1],  # Extract lower bound
-    ci_upper_screen5 = ci_screen5[[1]][2]   # Extract upper bound
+    # ci_screen5 = list(binom.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int),
+    # ci_lower_screen5 = ci_screen5[[1]][1],  # Extract lower bound
+    # ci_upper_screen5 = ci_screen5[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate_screen5 = round(donation_rate_screen5 * 100, 2),
@@ -727,7 +733,7 @@ donation_rate_screen5_plot <- ggplot(summary_screen5, aes(x = interaction(Defaul
 ggplotly(donation_rate_screen5_plot)
 ```
 
-### Screen 6
+#### Screen 6
 
 -   9 donors, 1 non-donors, without signal sent;
 
@@ -738,8 +744,8 @@ ggplotly(donation_rate_screen5_plot)
 screen_6 <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen6 = sum(grepl("2.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen6 = sum(grepl("1.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen6 = sum(grepl("2", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen6 = sum(grepl("1", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -754,13 +760,13 @@ summary_screen6 <- screen_6 %>%
     donation_rate_screen6 = num_donate_screen6 / (num_donate_screen6 + num_not_donate_screen6),
     
     # Calculate the confidence intervals for the donation rate
-    # ci_screen6 = list(prop.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int),
-    # ci_lower_screen6 = prop.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int[1],
-    # ci_upper_screen6 = prop.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int[2]
+    ci_screen6 = list(prop.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int),
+    ci_lower_screen6 = prop.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int[1],
+    ci_upper_screen6 = prop.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int[2]
     
-    ci_screen6 = list(binom.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int),
-    ci_lower_screen6 = ci_screen6[[1]][1],  # Extract lower bound
-    ci_upper_screen6 = ci_screen6[[1]][2]   # Extract upper bound
+    # ci_screen6 = list(binom.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int),
+    # ci_lower_screen6 = ci_screen6[[1]][1],  # Extract lower bound
+    # ci_upper_screen6 = ci_screen6[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate_screen6 = round(donation_rate_screen6 * 100, 2),
@@ -786,7 +792,7 @@ ggplotly(donation_rate_screen6_plot)
 ```
 :::
 
-### Summary Heatmap of Part3
+### 5.2 Summary Heatmap of Part3
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -798,18 +804,18 @@ pilot_data_filtered <- pilot_data %>%
 screen <- pilot_data_filtered %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen1 = sum(grepl("2.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen1 = sum(grepl("1.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen2 = sum(grepl("2.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen2 = sum(grepl("1.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen3 = sum(grepl("2.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen3 = sum(grepl("1.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen4 = sum(grepl("2.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen4 = sum(grepl("1.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen5 = sum(grepl("2.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen5 = sum(grepl("1.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen6 = sum(grepl("2.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen6 = sum(grepl("1.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen1 = sum(grepl("2", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen1 = sum(grepl("1", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen2 = sum(grepl("2", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen2 = sum(grepl("1", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen3 = sum(grepl("2", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen3 = sum(grepl("1", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen4 = sum(grepl("2", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen4 = sum(grepl("1", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen5 = sum(grepl("2", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen5 = sum(grepl("1", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen6 = sum(grepl("2", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen6 = sum(grepl("1", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -828,7 +834,7 @@ summary_screen <- screen %>%
     num_not_donate_9_1_signal = sum(num_not_donate_screen5),
     num_donate_9_1_no_signal = sum(num_donate_screen6),
     num_not_donate_9_1_no_signal = sum(num_not_donate_screen6),
-    
+
     # Calculate the donation rate
     per_donate_1_9_signal = num_donate_1_9_signal / (num_donate_1_9_signal + num_not_donate_1_9_signal),
     per_donate_1_9_no_signal = num_donate_1_9_no_signal / (num_donate_1_9_no_signal + num_not_donate_1_9_no_signal),
@@ -850,9 +856,10 @@ summary_screen <- summary_screen %>%
 ```
 
 ::: panel-tabset
-### Weak Consent Heat Map
 
-```{r}
+#### Weak Consent Heat Map
+
+```{r weakconsent}
 #| code-fold: true
 
 summary_weakconsent <- summary_screen %>%
@@ -874,7 +881,7 @@ summary_weakconsent <- summary_screen %>%
   select(DefaultStatus, BuySignal, OverturnCondition, Treatment, Donation_Rate)
 ```
 
-```{r}
+```{r weakconsent_plot}
 #| code-fold: true
 
 ggplot(summary_weakconsent, aes(x = BuySignal, y = Treatment, fill = Donation_Rate)) +
@@ -886,9 +893,9 @@ ggplot(summary_weakconsent, aes(x = BuySignal, y = Treatment, fill = Donation_Ra
   theme_minimal()
 ```
 
-### Strong Consent Heat Map
+#### Strong Consent Heat Map
 
-```{r}
+```{r strongconsent}
 #| code-fold: true
 
 summary_strongconsent <- summary_screen %>%
@@ -910,7 +917,7 @@ summary_strongconsent <- summary_screen %>%
   select(DefaultStatus, BuySignal, OverturnCondition, Treatment, Donation_Rate)
 ```
 
-```{r}
+```{r strongconsent_plot}
 #| code-fold: true
 
 strong_consent_plot <- ggplot(summary_strongconsent, aes(x = BuySignal, y = Treatment, fill = Donation_Rate)) +
@@ -925,7 +932,7 @@ print(strong_consent_plot)
 ```
 :::
 
-## Deeper Data Cleaning
+## 6. Deeper Data Cleaning
 
 In this section, we remove participants who send signals in Part 2, 1) when the DefaultStatus is donated, and they are wug donor, and 2) when the DefaultStatus is not donated, and they are wug non-donor.
 
@@ -942,36 +949,53 @@ pilot_data <- pilot_data %>%
       TRUE ~ WugRole
     )
   ) %>%
+  mutate(across(pragmatism:respect_tadition, as.numeric)) %>%  # Convert these columns to numeric
+  mutate(
+    moral_mean = rowMeans(select(., pragmatism:respect_tadition), na.rm = TRUE)  # Now compute row means
+  ) %>%
   rowwise() %>%
   mutate(
-    signal_sent = ifelse(p2_q1 == "1.0" | p2_q2 == "1.0" | p2_q3 == "1.0", 1, 0)
+    signal_sent = ifelse(p2_q1 == "1" | p2_q2 == "1" | p2_q3 == "1", 1, 0)
   ) %>%
   ungroup()
 
-# Filter out participants who sent signals in Part 2 while BuySignal is 75 tokens(Don't remove now)
 # Filter out participants who sent signals in Part 2 while DefaultStatus is donated, and WugRole contains Wug donor
 # Filter out participants who sent signals in Part 2 while DefaultStatus is not donated, and WugRole contains Wug non-donor
 pilot_data_cleaned <- pilot_data %>%
-#  filter(!(BuySignal == "75 tokens" & signal_sent == 1)) %>%
   filter(!(DefaultStatus == "donated" &
-#           BuySignal == "25 tokens" &
            wug_role == "Wug donor" &
            signal_sent == 1)) %>%
-  filter(!(DefaultStatus == "not donated" & 
-#             BuySignal == "25 tokens" & 
+  filter(!(DefaultStatus == "not donated" &
              wug_role == "Wug non-donor" & 
              signal_sent == 1))
 
 # Ouput the participants who sent signals in Part 2 while BuySignal is 75 tokens
 high_cost_people <- pilot_data_cleaned %>%
    filter(BuySignal == "75 tokens" & signal_sent == 1) %>%
-   select(pid, DefaultStatus, BuySignal, wug_role, p2_q1, p2_q2, p2_q3, signal_sent)
+   select(pid, DefaultStatus, BuySignal, OverturnCondition, wug_role, p2_q1, p2_q2, p2_q3, signal_sent, pragmatism, purity, justice, social_recognition, pleasure, compassion, spirituality, equality, giving, freedom, respect_tadition, moral_mean)
 
-write.csv(high_cost_people, "high_cost_people.csv")
 
+mean(high_cost_people$moral_mean, na.rm = TRUE)
+
+write.csv(high_cost_people, "high_cost_people_full.csv")
+
+# Output the participants who sent signals in Part 2 while DefaultStatus is donated, and WugRole contains Wug donor; and DefaultStatus is not donated, and WugRole contains Wug non-donor
+outliers <- pilot_data %>%
+  filter((DefaultStatus == "donated" & wug_role == "Wug donor" & signal_sent == 1) |
+         (DefaultStatus == "not donated" & wug_role == "Wug non-donor" & signal_sent == 1)) %>%
+  select(pid, DefaultStatus, BuySignal, OverturnCondition, wug_role, p2_q1, p2_q2, p2_q3, signal_sent, pragmatism, purity, justice, social_recognition, pleasure, compassion, spirituality, equality, giving, freedom, respect_tadition, moral_mean)
+
+write.csv(outliers, "outliers_full.csv")
+
+mean(outliers$moral_mean, na.rm = TRUE)
+
+# For the whole data
+mean(pilot_data$moral_mean, na.rm = TRUE)
 ```
 
-## Summary of Treatment Arms for Cleaned Data
+We can see that people who sent a signal in Part 2 while BuySignal was 75 tokens have the **highest** average moral score. People who are wug donors who sent a signal in Part 2 while DefaultStatus was donated or people who are wug non-donors who sent a signal in Part 2 while DefaultStatus was not donated have a **higher** average moral score than the whole data.
+
+### 6.1 Summary of Treatment Arms for Cleaned Data
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -983,7 +1007,7 @@ pilot_data_cleaned %>%
   kable(caption = "Summary of treatment arms for Cleaned Data")
 ```
 
-## Summary of Part 2 for Cleaned Data
+### 6.2 Summary of Part 2 for Cleaned Data
 
 ***Note:***
 
@@ -1005,12 +1029,12 @@ summary_p2_cleaned <- pilot_data_cleaned %>%
   ) %>%
   group_by(DefaultStatus, BuySignal, OverturnCondition, WugRole) %>%
   summarise(
-    p2q1_1 = sum(p2_q1 == '1.0', na.rm = TRUE),
-    p2q1_2 = sum(p2_q1 == '2.0', na.rm = TRUE),
-    p2q2_1 = sum(p2_q2 == '1.0', na.rm = TRUE),
-    p2q2_2 = sum(p2_q2 == '2.0', na.rm = TRUE),
-    p2q3_1 = sum(p2_q3 == '1.0', na.rm = TRUE),
-    p2q3_2 = sum(p2_q3 == '2.0', na.rm = TRUE),
+    p2q1_1 = sum(p2_q1 == '1', na.rm = TRUE),
+    p2q1_2 = sum(p2_q1 == '2', na.rm = TRUE),
+    p2q2_1 = sum(p2_q2 == '1', na.rm = TRUE),
+    p2q2_2 = sum(p2_q2 == '2', na.rm = TRUE),
+    p2q3_1 = sum(p2_q3 == '1', na.rm = TRUE),
+    p2q3_2 = sum(p2_q3 == '2', na.rm = TRUE),
     n_total = n()
   ) %>%
   pivot_longer(cols = starts_with("p2q"), 
@@ -1019,8 +1043,8 @@ summary_p2_cleaned <- pilot_data_cleaned %>%
                values_to = "Count") %>%
   mutate(
     Proportion = Count / n_total,
-    ci = purrr::map2(Count, n_total, ~binom.test(.x, .y)$conf.int),
-    #ci = purrr::map2(Count, n_total, ~prop.test(.x, .y)$conf.int),
+    #ci = purrr::map2(Count, n_total, ~binom.test(.x, .y)$conf.int),
+    ci = purrr::map2(Count, n_total, ~prop.test(.x, .y)$conf.int),
     ci_lower = purrr::map_dbl(ci, 1),
     ci_upper = purrr::map_dbl(ci, 2)
   ) %>%
@@ -1030,8 +1054,48 @@ summary_p2_cleaned <- pilot_data_cleaned %>%
 summary_p2_cleaned$Response <- factor(summary_p2_cleaned$Response, levels = c("1", "2"), labels = c("Yes", "No"))
 ```
 
+```{r message=FALSE}
+#| code-fold: true
+
+# Create a summary table of Part 2 for cleaned data
+summary_table_p2_cleaned <- pilot_data_cleaned %>%
+  group_by(DefaultStatus, BuySignal) %>%
+  summarise(
+    p2q1_1 = sum(p2_q1 == '1', na.rm = TRUE),
+    p2q1_2 = sum(p2_q1 == '2', na.rm = TRUE),
+    p2q2_1 = sum(p2_q2 == '1', na.rm = TRUE),
+    p2q2_2 = sum(p2_q2 == '2', na.rm = TRUE),
+    p2q3_1 = sum(p2_q3 == '1', na.rm = TRUE),
+    p2q3_2 = sum(p2_q3 == '2', na.rm = TRUE),
+    n_total = n()
+  ) %>%
+  # Calculate the percentage of Yes and No responses for each question
+  # Add % sign and round to 2 decimal places
+  mutate(
+    p2q1_1 = paste0(round(p2q1_1 / n_total * 100, 2), "%"),
+    p2q1_2 = paste0(round(p2q1_2 / n_total * 100, 2), "%"),
+    p2q2_1 = paste0(round(p2q2_1 / n_total * 100, 2), "%"),
+    p2q2_2 = paste0(round(p2q2_2 / n_total * 100, 2), "%"),
+    p2q3_1 = paste0(round(p2q3_1 / n_total * 100, 2), "%"),
+    p2q3_2 = paste0(round(p2q3_2 / n_total * 100, 2), "%")
+  ) %>%
+  rename(
+    "Sent Signal in P2Q1" = p2q1_1,
+    "Not Sent Signal in P2Q1" = p2q1_2,
+    "Sent Signal in P2Q2" = p2q2_1,
+    "Not Sent Signal in P2Q2" = p2q2_2,
+    "Sent Signal in P2Q3" = p2q3_1,
+    "Not Sent Signal in P2Q3" = p2q3_2,
+    "Total Participants" = n_total
+  )
+
+# Use kable to show the summary table
+kable(summary_table_p2_cleaned, caption = "Summary of Part 2 for Cleaned Data")
+```
+
+
 ::: panel-tabset
-### Donated, 25 Tokens, 1 Token
+#### Donated, 25 Tokens, 1 Token
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -1059,7 +1123,7 @@ p2_plot_1_cleaned <- ggplot(summary_p2_cleaned %>%
 ggplotly(p2_plot_1_cleaned)
 ```
 
-### Donated, 25 Tokens, 19 Tokens
+#### Donated, 25 Tokens, 19 Tokens
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -1087,7 +1151,7 @@ p2_plot_4_cleaned <- ggplot(summary_p2_cleaned %>%
 ggplotly(p2_plot_4_cleaned)
 ```
 
-### Donated, 75 Tokens, 1 Token
+#### Donated, 75 Tokens, 1 Token
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -1115,7 +1179,7 @@ p2_plot_2_cleaned <- ggplot(summary_p2_cleaned %>%
 ggplotly(p2_plot_2_cleaned)
 ```
 
-### Donated, 75 Tokens, 19 Tokens
+#### Donated, 75 Tokens, 19 Tokens
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -1143,7 +1207,7 @@ p2_plot_3_cleaned <- ggplot(summary_p2_cleaned %>%
 ggplotly(p2_plot_3_cleaned)
 ```
 
-### Not Donated, 25 Tokens, 1 Token
+#### Not Donated, 25 Tokens, 1 Token
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -1171,7 +1235,7 @@ p2_plot_4_cleaned <- ggplot(summary_p2_cleaned %>%
 ggplotly(p2_plot_4_cleaned)
 ```
 
-### Not Donated, 25 Tokens, 19 Tokens
+#### Not Donated, 25 Tokens, 19 Tokens
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -1199,7 +1263,7 @@ p2_plot_5_cleaned <- ggplot(summary_p2_cleaned %>%
 ggplotly(p2_plot_5_cleaned)
 ```
 
-### Not Donated, 75 Tokens, 1 Token
+#### Not Donated, 75 Tokens, 1 Token
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -1227,7 +1291,7 @@ p2_plot_6_cleaned <- ggplot(summary_p2_cleaned %>%
 ggplotly(p2_plot_6_cleaned)
 ```
 
-### Not Donated, 75 Tokens, 19 Tokens
+#### Not Donated, 75 Tokens, 19 Tokens
 
 ```{r message=FALSE}
 #| code-fold: true
@@ -1256,7 +1320,7 @@ ggplotly(p2_plot_7_cleaned)
 ```
 :::
 
-## Summary of Part 3 for Cleaned Data
+### 6.3 Summary of Part 3 for Cleaned Data
 
 In this section, I'll show the donation rates for each treatment arm.
 
@@ -1267,8 +1331,8 @@ In this section, I'll show the donation rates for each treatment arm.
 pilot_data_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate = sum(grepl("2.0", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate = sum(grepl("1.0", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate = sum(grepl("2", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate = sum(grepl("1", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1283,14 +1347,14 @@ summary_p3_cleaned <- pilot_data_cleaned %>%
     donation_rate = num_donate / (num_donate + num_not_donate),
     
     # Calculate the confidence intervals for the donation rate
-    #ci = list(prop.test(num_donate, num_donate + num_not_donate)$conf.int),
-    #ci_lower = prop.test(num_donate, num_donate + num_not_donate)$conf.int[1],
-    #ci_upper = prop.test(num_donate, num_donate + num_not_donate)$conf.int[2]
-    
+    ci = list(prop.test(num_donate, num_donate + num_not_donate)$conf.int),
+    ci_lower = prop.test(num_donate, num_donate + num_not_donate)$conf.int[1],
+    ci_upper = prop.test(num_donate, num_donate + num_not_donate)$conf.int[2]
+
      # Calculate confidence intervals for the donation rate using binom.test()
-    ci = list(binom.test(num_donate, num_donate + num_not_donate)$conf.int),
-    ci_lower = ci[[1]][1],  # Extract lower bound
-    ci_upper = ci[[1]][2]   # Extract upper bound
+    # ci = list(binom.test(num_donate, num_donate + num_not_donate)$conf.int),
+    # ci_lower = ci[[1]][1],  # Extract lower bound
+    # ci_upper = ci[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate = round(donation_rate * 100, 2),
@@ -1301,8 +1365,105 @@ summary_p3_cleaned <- pilot_data_cleaned %>%
   select(-ci)
 ```
 
+```{r message=FALSE}
+#| code-fold: true
+
+# Create a summary table of Part 3 for cleaned data
+pilot_data_filtered_cleaned <- pilot_data_cleaned %>%
+  select(DefaultStatus, BuySignal, OverturnCondition, WugRole, p2_q1, p2_q2, p2_q3, Screen_1_donated:Screen_6_notdonated, num_donate, num_not_donate)
+
+screen_cleaned <- pilot_data_filtered_cleaned %>%
+  rowwise() %>%
+  mutate(
+    num_not_donate_screen1 = sum(grepl("2", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen1 = sum(grepl("1", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen2 = sum(grepl("2", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen2 = sum(grepl("1", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen3 = sum(grepl("2", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen3 = sum(grepl("1", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen4 = sum(grepl("2", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen4 = sum(grepl("1", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen5 = sum(grepl("2", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen5 = sum(grepl("1", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen6 = sum(grepl("2", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen6 = sum(grepl("1", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+summary_screen_cleaned <- screen_cleaned %>%
+  group_by(DefaultStatus, BuySignal, OverturnCondition) %>%
+  summarise(
+    p2q1_1 = sum(p2_q1 == '1', na.rm = TRUE),
+    p2q1_2 = sum(p2_q1 == '2', na.rm = TRUE),
+    p2q2_1 = sum(p2_q2 == '1', na.rm = TRUE),
+    p2q2_2 = sum(p2_q2 == '2', na.rm = TRUE),
+    p2q3_1 = sum(p2_q3 == '1', na.rm = TRUE),
+    p2q3_2 = sum(p2_q3 == '2', na.rm = TRUE),
+    num_donate_1_9_signal = sum(num_donate_screen1),
+    num_not_donate_1_9_signal = sum(num_not_donate_screen1),
+    num_donate_1_9_no_signal = sum(num_donate_screen2),
+    num_not_donate_1_9_no_signal = sum(num_not_donate_screen2),
+    num_donate_5_5_signal = sum(num_donate_screen3),
+    num_not_donate_5_5_signal = sum(num_not_donate_screen3),
+    num_donate_5_5_no_signal = sum(num_donate_screen4),
+    num_not_donate_5_5_no_signal = sum(num_not_donate_screen4),
+    num_donate_9_1_signal = sum(num_donate_screen5),
+    num_not_donate_9_1_signal = sum(num_not_donate_screen5),
+    num_donate_9_1_no_signal = sum(num_donate_screen6),
+    num_not_donate_9_1_no_signal = sum(num_not_donate_screen6),
+    
+    # Calculate the donation rate
+    per_donate_1_9_signal = num_donate_1_9_signal / (num_donate_1_9_signal + num_not_donate_1_9_signal),
+    per_donate_1_9_no_signal = num_donate_1_9_no_signal / (num_donate_1_9_no_signal + num_not_donate_1_9_no_signal),
+    per_donate_5_5_signal = num_donate_5_5_signal / (num_donate_5_5_signal + num_not_donate_5_5_signal),
+    per_donate_5_5_no_signal = num_donate_5_5_no_signal / (num_donate_5_5_no_signal + num_not_donate_5_5_no_signal),
+    per_donate_9_1_signal = num_donate_9_1_signal / (num_donate_9_1_signal + num_not_donate_9_1_signal),
+    per_donate_9_1_no_signal = num_donate_9_1_no_signal / (num_donate_9_1_no_signal + num_not_donate_9_1_no_signal),
+    
+    # Calculate the not donation rate
+    per_not_donate_1_9_signal = num_not_donate_1_9_signal / (num_donate_1_9_signal + num_not_donate_1_9_signal),
+    per_not_donate_1_9_no_signal = num_not_donate_1_9_no_signal / (num_donate_1_9_no_signal + num_not_donate_1_9_no_signal),
+    per_not_donate_5_5_signal = num_not_donate_5_5_signal / (num_donate_5_5_signal + num_not_donate_5_5_signal),
+    per_not_donate_5_5_no_signal = num_not_donate_5_5_no_signal / (num_donate_5_5_no_signal + num_not_donate_5_5_no_signal),
+    per_not_donate_9_1_signal = num_not_donate_9_1_signal / (num_donate_9_1_signal + num_not_donate_9_1_signal),
+    per_not_donate_9_1_no_signal = num_not_donate_9_1_no_signal / (num_donate_9_1_no_signal + num_not_donate_9_1_no_signal),
+    per_p2q1_signal = p2q1_1 / (p2q1_1 + p2q1_2),
+    per_p2q1_not_signal = p2q1_2 / (p2q1_1 + p2q1_2),
+    per_p2q2_signal = p2q2_1 / (p2q2_1 + p2q2_2),
+    per_p2q2_not_signal = p2q2_2 / (p2q2_1 + p2q2_2),
+    per_p2q3_signal = p2q3_1 / (p2q3_1 + p2q3_2),
+    per_p2q3_not_signal = p2q3_2 / (p2q3_1 + p2q3_2),
+    n_total = n()
+  ) %>%
+  ungroup()
+
+summary_table_p3_cleaned <- summary_screen_cleaned %>%
+  select(DefaultStatus, BuySignal, OverturnCondition, per_donate_1_9_signal, per_donate_1_9_no_signal, per_donate_5_5_signal, per_donate_5_5_no_signal, per_donate_9_1_signal, per_donate_9_1_no_signal,n_total) %>%
+  mutate(
+    per_donate_1_9_signal = paste0(round(per_donate_1_9_signal * 100, 2), "%"),
+    per_donate_1_9_no_signal = paste0(round(per_donate_1_9_no_signal * 100, 2), "%"),
+    per_donate_5_5_signal = paste0(round(per_donate_5_5_signal * 100, 2), "%"),
+    per_donate_5_5_no_signal = paste0(round(per_donate_5_5_no_signal * 100, 2), "%"),
+    per_donate_9_1_signal = paste0(round(per_donate_9_1_signal * 100, 2), "%"),
+    per_donate_9_1_no_signal = paste0(round(per_donate_9_1_no_signal * 100, 2), "%")
+  ) %>%
+  rename(
+    "Screen 1 Donation Rate" = per_donate_1_9_signal,
+    "Screen 2 Donation Rate" = per_donate_1_9_no_signal,
+    "Screen 3 Donation Rate" = per_donate_5_5_signal,
+    "Screen 4 Donation Rate" = per_donate_5_5_no_signal,
+    "Screen 5 Donation Rate" = per_donate_9_1_signal,
+    "Screen 6 Donation Rate" = per_donate_9_1_no_signal,
+    "Total Participants" = n_total
+  )
+
+# Use kable to show the summary table
+kable(summary_table_p3_cleaned, caption = "Summary of Part 3 for Cleaned Data")
+```
+
 ::: panel-tabset
-### Screen 1
+
+#### Screen 1
 
 -   1 donor, 9 non-donors, with signal sent;
 
@@ -1313,8 +1474,8 @@ summary_p3_cleaned <- pilot_data_cleaned %>%
 screen_1_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen1 = sum(grepl("2.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen1 = sum(grepl("1.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen1 = sum(grepl("2", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen1 = sum(grepl("1", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1329,13 +1490,13 @@ summary_screen1_cleaned <- screen_1_cleaned %>%
     donation_rate_screen1 = num_donate_screen1 / (num_donate_screen1 + num_not_donate_screen1),
     
     # Calculate the confidence intervals for the donation rate
-    # ci_screen1 = list(prop.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int),
-    # ci_lower_screen1 = prop.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int[1],
-    # ci_upper_screen1 = prop.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int[2]
-    # 
-    ci_screen1 = list(binom.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int),
-    ci_lower_screen1 = ci_screen1[[1]][1],  # Extract lower bound
-    ci_upper_screen1 = ci_screen1[[1]][2]   # Extract upper bound
+    ci_screen1 = list(prop.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int),
+    ci_lower_screen1 = prop.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int[1],
+    ci_upper_screen1 = prop.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int[2]
+
+    # ci_screen1 = list(binom.test(num_donate_screen1, num_donate_screen1 + num_not_donate_screen1)$conf.int),
+    # ci_lower_screen1 = ci_screen1[[1]][1],  # Extract lower bound
+    # ci_upper_screen1 = ci_screen1[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate_screen1 = round(donation_rate_screen1 * 100, 2),
@@ -1357,30 +1518,10 @@ donation_rate_screen1_plot_cleaned <- ggplot(summary_screen1_cleaned, aes(x = in
   theme(legend.position = "none",
         axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Pivot the data so that BuySignal becomes the x-axis and donation rates are shown on the heatmap
-# summary_screen1 <- summary_screen1 %>%
-#   mutate(BuySignal = factor(BuySignal, levels = c("25 tokens", "75 tokens"))) %>%
-#   mutate(OverturnCondition = factor(OverturnCondition, levels = c("1 token", "19 tokens")))
-# 
-# # Plot using ggplot2, creating a facet grid for DefaultStatus and OverturnCondition
-# ggplot(summary_screen1, aes(x = BuySignal, y = donation_rate_screen1)) +
-#   geom_tile(aes(fill = donation_rate_screen1), color = "white") +  # Create the heatmap tiles
-#   scale_fill_gradient(low = "lightblue", high = "darkblue") +  # Gradient color scale
-#   facet_grid(OverturnCondition ~ DefaultStatus, labeller = label_both) +  # Separate plots based on OverturnCondition and DefaultStatus
-#   geom_text(aes(label = round(donation_rate_screen1, 2)), color = "black", size = 6) +  # Add labels on tiles
-#   labs(x = "Buy Signal", y = "Donation Rate (%)", fill = "Donation Rate", 
-#        title = "Heatmap of Donation Rates by BuySignal and OverturnCondition") +  # Add labels and title
-#   theme_minimal() +  # Clean theme
-#   ylim(0, 100) +  # Set y-axis limits
-#   theme(axis.text.x = element_text(angle = 45, hjust = 1),  # Rotate x-axis labels for better readability
-#         axis.text = element_text(size = 8),  # Adjust size of axis text for better readability
-#         strip.text = element_text(size = 8, face = "bold"),  # Adjust facet labels size and style
-#         plot.title = element_text(hjust = 0.5, face = "bold"))
-
 ggplotly(donation_rate_screen1_plot_cleaned)
 ```
 
-### Screen 2
+#### Screen 2
 
 -   1 donor, 9 non-donors, without signal sent;
 
@@ -1391,8 +1532,8 @@ ggplotly(donation_rate_screen1_plot_cleaned)
 screen_2_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen2 = sum(grepl("2.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen2 = sum(grepl("1.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen2 = sum(grepl("2", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen2 = sum(grepl("1", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1407,13 +1548,13 @@ summary_screen2_cleaned <- screen_2_cleaned %>%
     donation_rate_screen2 = num_donate_screen2 / (num_donate_screen2 + num_not_donate_screen2),
     
     # Calculate the confidence intervals for the donation rate
-    # ci_screen2 = list(prop.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int),
-    # ci_lower_screen2 = prop.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int[1],
-    # ci_upper_screen2 = prop.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int[2]
-    
-    ci_screen2 = list(binom.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int),
-    ci_lower_screen2 = ci_screen2[[1]][1],  # Extract lower bound
-    ci_upper_screen2 = ci_screen2[[1]][2]   # Extract upper bound
+    ci_screen2 = list(prop.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int),
+    ci_lower_screen2 = prop.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int[1],
+    ci_upper_screen2 = prop.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int[2]
+
+    # ci_screen2 = list(binom.test(num_donate_screen2, num_donate_screen2 + num_not_donate_screen2)$conf.int),
+    # ci_lower_screen2 = ci_screen2[[1]][1],  # Extract lower bound
+    # ci_upper_screen2 = ci_screen2[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate_screen2 = round(donation_rate_screen2 * 100, 2),
@@ -1438,7 +1579,7 @@ donation_rate_screen2_plot_cleaned <- ggplot(summary_screen2_cleaned, aes(x = in
 ggplotly(donation_rate_screen2_plot_cleaned)
 ```
 
-### Screen 3
+#### Screen 3
 
 -   5 donors, 5 non-donors, with signal sent;
 
@@ -1452,8 +1593,8 @@ ggplotly(donation_rate_screen2_plot_cleaned)
 screen_3_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen3 = sum(grepl("2.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen3 = sum(grepl("1.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen3 = sum(grepl("2", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen3 = sum(grepl("1", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1469,13 +1610,13 @@ summary_screen3_cleaned <- screen_3_cleaned %>%
     donation_rate_screen3 = num_donate_screen3 / (num_donate_screen3 + num_not_donate_screen3),
 
     # Calculate the confidence intervals for the donation rate
-    # ci_screen3 = list(prop.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int),
-    # ci_lower_screen3 = prop.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int[1],
-    # ci_upper_screen3 = prop.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int[2]
-    
-    ci_screen3 = list(binom.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int),
-    ci_lower_screen3 = ci_screen3[[1]][1],  # Extract lower bound
-    ci_upper_screen3 = ci_screen3[[1]][2]   # Extract upper bound
+    ci_screen3 = list(prop.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int),
+    ci_lower_screen3 = prop.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int[1],
+    ci_upper_screen3 = prop.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int[2]
+
+    # ci_screen3 = list(binom.test(num_donate_screen3, num_donate_screen3 + num_not_donate_screen3)$conf.int),
+    # ci_lower_screen3 = ci_screen3[[1]][1],  # Extract lower bound
+    # ci_upper_screen3 = ci_screen3[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate_screen3 = round(donation_rate_screen3 * 100, 2),
@@ -1500,7 +1641,7 @@ donation_rate_screen3_plot_cleaned <- ggplot(summary_screen3_cleaned, aes(x = in
 ggplotly(donation_rate_screen3_plot_cleaned)
 ```
 
-### Screen 4
+#### Screen 4
 
 -   5 donors, 5 non-donors, without signal sent;
 
@@ -1511,8 +1652,8 @@ ggplotly(donation_rate_screen3_plot_cleaned)
 screen_4_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen4 = sum(grepl("2.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen4 = sum(grepl("1.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen4 = sum(grepl("2", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen4 = sum(grepl("1", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1527,13 +1668,13 @@ summary_screen4_cleaned <- screen_4_cleaned %>%
     donation_rate_screen4 = num_donate_screen4 / (num_donate_screen4 + num_not_donate_screen4),
     
     # Calculate the confidence intervals for the donation rate
-    # ci_screen4 = list(prop.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int),
-    # ci_lower_screen4 = prop.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int[1],
-    # ci_upper_screen4 = prop.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int[2]
-    
-    ci_screen4 = list(binom.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int),
-    ci_lower_screen4 = ci_screen4[[1]][1],  # Extract lower bound
-    ci_upper_screen4 = ci_screen4[[1]][2]   # Extract upper bound
+    ci_screen4 = list(prop.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int),
+    ci_lower_screen4 = prop.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int[1],
+    ci_upper_screen4 = prop.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int[2]
+
+    # ci_screen4 = list(binom.test(num_donate_screen4, num_donate_screen4 + num_not_donate_screen4)$conf.int),
+    # ci_lower_screen4 = ci_screen4[[1]][1],  # Extract lower bound
+    # ci_upper_screen4 = ci_screen4[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate_screen4 = round(donation_rate_screen4 * 100, 2),
@@ -1558,7 +1699,7 @@ donation_rate_screen4_plot_cleaned <- ggplot(summary_screen4_cleaned, aes(x = in
 ggplotly(donation_rate_screen4_plot_cleaned)
 ```
 
-### Screen 5
+#### Screen 5
 
 -   9 donors, 1 non-donors, with signal sent;
 
@@ -1569,8 +1710,8 @@ ggplotly(donation_rate_screen4_plot_cleaned)
 screen_5_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen5 = sum(grepl("2.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen5 = sum(grepl("1.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen5 = sum(grepl("2", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen5 = sum(grepl("1", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1585,13 +1726,13 @@ summary_screen5_cleaned <- screen_5_cleaned %>%
     donation_rate_screen5 = num_donate_screen5 / (num_donate_screen5 + num_not_donate_screen5),
     
     # Calculate the confidence intervals for the donation rate
-    # ci_screen5 = list(prop.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int),
-    # ci_lower_screen5 = prop.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int[1],
-    # ci_upper_screen5 = prop.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int[2]
-    
-    ci_screen5 = list(binom.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int),
-    ci_lower_screen5 = ci_screen5[[1]][1],  # Extract lower bound
-    ci_upper_screen5 = ci_screen5[[1]][2]   # Extract upper bound
+    ci_screen5 = list(prop.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int),
+    ci_lower_screen5 = prop.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int[1],
+    ci_upper_screen5 = prop.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int[2]
+
+    # ci_screen5 = list(binom.test(num_donate_screen5, num_donate_screen5 + num_not_donate_screen5)$conf.int),
+    # ci_lower_screen5 = ci_screen5[[1]][1],  # Extract lower bound
+    # ci_upper_screen5 = ci_screen5[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate_screen5 = round(donation_rate_screen5 * 100, 2),
@@ -1616,7 +1757,7 @@ donation_rate_screen5_plot_cleaned <- ggplot(summary_screen5_cleaned, aes(x = in
 ggplotly(donation_rate_screen5_plot_cleaned)
 ```
 
-### Screen 6
+#### Screen 6
 
 -   9 donors, 1 non-donors, without signal sent;
 
@@ -1627,8 +1768,8 @@ ggplotly(donation_rate_screen5_plot_cleaned)
 screen_6_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen6 = sum(grepl("2.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen6 = sum(grepl("1.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen6 = sum(grepl("2", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen6 = sum(grepl("1", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1643,13 +1784,13 @@ summary_screen6_cleaned <- screen_6_cleaned %>%
     donation_rate_screen6 = num_donate_screen6 / (num_donate_screen6 + num_not_donate_screen6),
     
     # Calculate the confidence intervals for the donation rate
-    # ci_screen6 = list(prop.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int),
-    # ci_lower_screen6 = prop.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int[1],
-    # ci_upper_screen6 = prop.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int[2]
-    
-    ci_screen6 = list(binom.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int),
-    ci_lower_screen6 = ci_screen6[[1]][1],  # Extract lower bound
-    ci_upper_screen6 = ci_screen6[[1]][2]   # Extract upper bound
+    ci_screen6 = list(prop.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int),
+    ci_lower_screen6 = prop.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int[1],
+    ci_upper_screen6 = prop.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int[2]
+
+    # ci_screen6 = list(binom.test(num_donate_screen6, num_donate_screen6 + num_not_donate_screen6)$conf.int),
+    # ci_lower_screen6 = ci_screen6[[1]][1],  # Extract lower bound
+    # ci_upper_screen6 = ci_screen6[[1]][2]   # Extract upper bound
   ) %>%
   mutate(
     donation_rate_screen6 = round(donation_rate_screen6 * 100, 2),
@@ -1675,62 +1816,13 @@ ggplotly(donation_rate_screen6_plot_cleaned)
 ```
 :::
 
-### Summary Heatmap of Part3 for Cleaned Data
+### 6.4 Summary Heatmap of Part3 for Cleaned Data
 
 ```{r message=FALSE}
 #| code-fold: true
 
-# Keep Part 2 and Part 3 question responses
-pilot_data_filtered_cleaned <- pilot_data_cleaned %>%
-  select(DefaultStatus, BuySignal, OverturnCondition, WugRole, p2_q1, p2_q2, p2_q3, Screen_1_donated:Screen_6_notdonated, num_donate, num_not_donate)
-
-screen_cleaned <- pilot_data_filtered_cleaned %>%
-  rowwise() %>%
-  mutate(
-    num_not_donate_screen1 = sum(grepl("2.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen1 = sum(grepl("1.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen2 = sum(grepl("2.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen2 = sum(grepl("1.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen3 = sum(grepl("2.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen3 = sum(grepl("1.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen4 = sum(grepl("2.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen4 = sum(grepl("1.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen5 = sum(grepl("2.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen5 = sum(grepl("1.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen6 = sum(grepl("2.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen6 = sum(grepl("1.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
-  ) %>%
-  ungroup()
-
-summary_screen_cleaned <- screen_cleaned %>%
-  group_by(DefaultStatus, BuySignal, OverturnCondition) %>%
-  summarise(
-    num_donate_1_9_signal = sum(num_donate_screen1),
-    num_not_donate_1_9_signal = sum(num_not_donate_screen1),
-    num_donate_1_9_no_signal = sum(num_donate_screen2),
-    num_not_donate_1_9_no_signal = sum(num_not_donate_screen2),
-    num_donate_5_5_signal = sum(num_donate_screen3),
-    num_not_donate_5_5_signal = sum(num_not_donate_screen3),
-    num_donate_5_5_no_signal = sum(num_donate_screen4),
-    num_not_donate_5_5_no_signal = sum(num_not_donate_screen4),
-    num_donate_9_1_signal = sum(num_donate_screen5),
-    num_not_donate_9_1_signal = sum(num_not_donate_screen5),
-    num_donate_9_1_no_signal = sum(num_donate_screen6),
-    num_not_donate_9_1_no_signal = sum(num_not_donate_screen6),
-    
-    # Calculate the donation rate
-    per_donate_1_9_signal = num_donate_1_9_signal / (num_donate_1_9_signal + num_not_donate_1_9_signal),
-    per_donate_1_9_no_signal = num_donate_1_9_no_signal / (num_donate_1_9_no_signal + num_not_donate_1_9_no_signal),
-    per_donate_5_5_signal = num_donate_5_5_signal / (num_donate_5_5_signal + num_not_donate_5_5_signal),
-    per_donate_5_5_no_signal = num_donate_5_5_no_signal / (num_donate_5_5_no_signal + num_not_donate_5_5_no_signal),
-    per_donate_9_1_signal = num_donate_9_1_signal / (num_donate_9_1_signal + num_not_donate_9_1_signal),
-    per_donate_9_1_no_signal = num_donate_9_1_no_signal / (num_donate_9_1_no_signal + num_not_donate_9_1_no_signal)
-  ) %>%
-  ungroup()
-
-
 # Change to long format based on per_donate_1_9_sinal:per_donate_9_1_no_signal
-summary_screen_cleaned <- summary_screen_cleaned %>%
+summary_heatmap_cleaned <- summary_screen_cleaned %>%
   pivot_longer(cols = starts_with("per_donate"), names_to = "Treatment", values_to = "Donation_Rate") %>%
   mutate(
     Treatment = factor(Treatment, levels = c("per_donate_1_9_signal", "per_donate_1_9_no_signal", "per_donate_5_5_signal", "per_donate_5_5_no_signal", "per_donate_9_1_signal", "per_donate_9_1_no_signal")),
@@ -1739,12 +1831,13 @@ summary_screen_cleaned <- summary_screen_cleaned %>%
 ```
 
 ::: panel-tabset
-### Weak Consent Heat Map
 
-```{r}
+#### Weak Consent Heat Map
+
+```{r weakconsent_cleaned, message=FALSE}
 #| code-fold: true
 
-summary_weakconsent_cleaned <- summary_screen_cleaned %>%
+summary_weakconsent_cleaned <- summary_heatmap_cleaned %>%
   filter((OverturnCondition == "1 token"))%>%
   filter(
     (DefaultStatus == 'donated' & BuySignal == "25 tokens" & Treatment == 'per_donate_9_1_signal') |
@@ -1763,7 +1856,7 @@ summary_weakconsent_cleaned <- summary_screen_cleaned %>%
   select(DefaultStatus, BuySignal, OverturnCondition, Treatment, Donation_Rate)
 ```
 
-```{r}
+```{r weakconsent_cleaned_plot, message=FALSE}
 #| code-fold: true
 
 ggplot(summary_weakconsent_cleaned, aes(x = BuySignal, y = Treatment, fill = Donation_Rate)) +
@@ -1775,12 +1868,12 @@ ggplot(summary_weakconsent_cleaned, aes(x = BuySignal, y = Treatment, fill = Don
   theme_minimal()
 ```
 
-### Strong Consent Heat Map
+#### Strong Consent Heat Map
 
-```{r}
+```{r strongconsent_cleaned, message=FALSE}
 #| code-fold: true
 
-summary_strongconsent_cleaned <- summary_screen_cleaned %>%
+summary_strongconsent_cleaned <- summary_heatmap_cleaned %>%
   filter((OverturnCondition == "19 tokens"))%>%
   filter(
     (DefaultStatus == 'donated' & BuySignal == "25 tokens" & Treatment == 'per_donate_9_1_signal') |
@@ -1799,7 +1892,7 @@ summary_strongconsent_cleaned <- summary_screen_cleaned %>%
   select(DefaultStatus, BuySignal, OverturnCondition, Treatment, Donation_Rate)
 ```
 
-```{r}
+```{r strongconsent_cleaned_plot, message=FALSE}
 #| code-fold: true
 
 strong_consent_plot_cleaned <- ggplot(summary_strongconsent_cleaned, aes(x = BuySignal, y = Treatment, fill = Donation_Rate)) +
@@ -1812,4 +1905,126 @@ strong_consent_plot_cleaned <- ggplot(summary_strongconsent_cleaned, aes(x = Buy
 
 print(strong_consent_plot_cleaned)
 ```
+:::
+
+## 7. Total Donation Rates
+
+Last but not least, we will combine both Part 2 and Part 3 to calculate the total donation rates for each treatment arm.
+
+$$
+Donation Rate = PercentSignal \times DonationRateSignal + PercentNotSignal \times DonationRateNoSignal
+$$
+
+```{r message=FALSE}
+#| code-fold: true
+
+total_donation_summary <- summary_screen_cleaned %>%
+  mutate(
+    total_donation_rate_1_9 = per_p2q1_signal * per_donate_1_9_signal + per_p2q1_not_signal * per_donate_1_9_no_signal,
+    total_donation_rate_5_5 = per_p2q2_signal * per_donate_5_5_signal + per_p2q2_not_signal * per_donate_5_5_no_signal,
+    total_donation_rate_9_1 = per_p2q3_signal * per_donate_9_1_signal + per_p2q3_not_signal * per_donate_9_1_no_signal
+  ) %>%
+  select(DefaultStatus, BuySignal, OverturnCondition, per_p2q1_signal, per_p2q1_not_signal, per_p2q2_signal, per_p2q2_not_signal, per_p2q3_signal, per_p2q3_not_signal, per_donate_1_9_signal, per_donate_1_9_no_signal,per_donate_5_5_signal, per_donate_5_5_no_signal, per_donate_9_1_signal, per_donate_9_1_no_signal, total_donation_rate_1_9, total_donation_rate_5_5, total_donation_rate_9_1) %>%
+  mutate(
+    per_p2q1_signal = paste0(round(per_p2q1_signal * 100, 2), "%"),
+    per_p2q1_not_signal = paste0(round(per_p2q1_not_signal * 100, 2), "%"),
+    per_p2q2_signal = paste0(round(per_p2q2_signal * 100, 2), "%"),
+    per_p2q2_not_signal = paste0(round(per_p2q2_not_signal * 100, 2), "%"),
+    per_p2q3_signal = paste0(round(per_p2q3_signal * 100, 2), "%"),
+    per_p2q3_not_signal = paste0(round(per_p2q3_not_signal * 100, 2), "%"),
+    per_donate_1_9_signal = paste0(round(per_donate_1_9_signal * 100, 2), "%"),
+    per_donate_1_9_no_signal = paste0(round(per_donate_1_9_no_signal * 100, 2), "%"),
+    per_donate_5_5_signal = paste0(round(per_donate_5_5_signal * 100, 2), "%"),
+    per_donate_5_5_no_signal = paste0(round(per_donate_5_5_no_signal * 100, 2), "%"),
+    per_donate_9_1_signal = paste0(round(per_donate_9_1_signal * 100, 2), "%"),
+    per_donate_9_1_no_signal = paste0(round(per_donate_9_1_no_signal * 100, 2), "%"),
+    total_donation_rate_1_9 = round(total_donation_rate_1_9 * 100, 2),
+    total_donation_rate_5_5 = round(total_donation_rate_5_5 * 100, 2),
+    total_donation_rate_9_1 = round(total_donation_rate_9_1 * 100, 2)
+  )
+
+# Change to long format based on total_donation_rate_1_9:total_donation_rate_9_1
+total_donation_summary_long <- total_donation_summary %>%
+  pivot_longer(cols = starts_with("total_donation_rate"), names_to = "Treatment", values_to = "Donation_Rate") %>%
+  mutate(
+    Treatment = factor(Treatment, levels = c("total_donation_rate_1_9", "total_donation_rate_5_5", "total_donation_rate_9_1"))
+  )
+```
+
+```{r message=FALSE}
+#| code-fold: true
+
+# Create a summary table for total donation rates
+total_donation_summary <- total_donation_summary %>%
+  rename(
+    "P2Q1 Send Signal" = per_p2q1_signal,
+    "P2Q1 Not Send Signal" = per_p2q1_not_signal,
+    "P2Q2 Send Signal" = per_p2q2_signal,
+    "P2Q2 Not Send Signal" = per_p2q2_not_signal,
+    "P2Q3 Send Signal" = per_p2q3_signal,
+    "P2Q3 Not Send Signal" = per_p2q3_not_signal,
+    "Screen 1 Donation Rate" = per_donate_1_9_signal,
+    "Screen 2 Donation Rate" = per_donate_1_9_no_signal,
+    "Screen 3 Donation Rate" = per_donate_5_5_signal,
+    "Screen 4 Donation Rate" = per_donate_5_5_no_signal,
+    "Screen 5 Donation Rate" = per_donate_9_1_signal,
+    "Screen 6 Donation Rate" = per_donate_9_1_no_signal,
+    "Total Donation Rate(1 donor, 9 non-donors)" = total_donation_rate_1_9,
+    "Total Donation Rate(5 donors, 5 non-donors)" = total_donation_rate_5_5,
+    "Total Donation Rate(9 donors, 1 non-donors)" = total_donation_rate_9_1
+  )
+
+# Use kable to show the summary table
+kable(total_donation_summary, caption = "Summary of Total Donation Rates")
+```
+
+::: panel-tabset
+
+#### Weak Consent Total Donation Rate
+
+```{r weakconsent_total, message=FALSE}
+#| code-fold: true
+
+summary_weakconsent_total <- total_donation_summary_long %>%
+  filter((OverturnCondition == "1 token"))
+```
+
+```{r weakconsent_total_plot, message=FALSE}
+#| code-fold: true
+
+weakconsent_total_plot <- ggplot(summary_weakconsent_total, aes(x = BuySignal, y = Treatment, fill = Donation_Rate)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue") +
+  geom_text(aes(label = round(Donation_Rate, 2)), color = "black") +
+  labs(title = "Total Donation Rate For Weak Consent", x = "Buy Signal", y = "Treatment", fill = "Donation Rate") +
+  facet_wrap(~ DefaultStatus) +  # Create facets by DefaultStatus
+  theme_minimal()
+
+ggplotly(weakconsent_total_plot)
+```
+
+#### Strong Consent Total Donation Rate
+
+```{r strongconsent_total, message=FALSE}
+#| code-fold: true
+
+summary_strongconsent_total <- total_donation_summary_long %>%
+  filter((OverturnCondition == "19 tokens"))
+
+```
+
+```{r strongconsent_total_plot, message=FALSE}
+#| code-fold: true
+
+strongconsent_total_plot <- ggplot(summary_strongconsent_total, aes(x = BuySignal, y = Treatment, fill = Donation_Rate)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue") +
+  geom_text(aes(label = round(Donation_Rate, 2)), color = "black") +
+  labs(title = "Total Donation Rate For Strong Consent", x = "Buy Signal", y = "Treatment", fill = "Donation Rate") +
+  facet_wrap(~ DefaultStatus) +  # Create facets by DefaultStatus
+  theme_minimal()
+
+ggplotly(strongconsent_total_plot)
+```
+
 :::
