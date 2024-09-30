@@ -2036,14 +2036,6 @@ ggplotly(strongconsent_total_plot)
 
 # Variables we may need: pid, name_wug, p2_q1, p2_q2, p2_q3, Screen_1_donated:Screen_6_notdonated, Assigned_Family, DefaultStatus, BuySignal, OverturnCondition, wug_role, num_not_donate, num_donate, moral_mean, signal_sent
 
-# Move the specified columns to the front
-pilot_data_cleaned <- pilot_data_cleaned %>%
-  select("pid", "name_wug", "p2_q1", "p2_q2", "p2_q3", "Screen_1_donated", "Screen_1_notdonated", 
-         "Screen_2_donated", "Screen_2_notdonated", starts_with("Screen_3"), "Screen_4_donated", 
-         "Screen_4_notdonated", "Screen_5_donated", "Screen_5_notdonated", "Screen_6_donated", 
-         "Screen_6_notdonated", "Assigned_Family", "DefaultStatus", "BuySignal", "OverturnCondition", 
-         "wug_role", "num_not_donate", "num_donate", "moral_mean", "signal_sent", everything())
-
 # Create new binary variables for Part 2 and Part 3
 pilot_data_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
@@ -2098,9 +2090,21 @@ pilot_data_cleaned <- pilot_data_cleaned %>%
     Screen_6_binary = factor(Screen_6_binary, levels = c(0, 1), labels = c("Not donate", "Donate")),
     
     # Do it for Part 2 questions as well
-    p2_q1 = factor(p2_q1, levels = c(0, 1), labels = c("Not Send Signal", "Send Signal")),
-    p2_q2 = factor(p2_q2, levels = c(0, 1), labels = c("Not Send Signal", "Send Signal")),
-    p2_q3 = factor(p2_q3, levels = c(0, 1), labels = c("Not Send Signal", "Send Signal"))
+    p2_q1_binary = factor(p2_q1_binary, levels = c(0, 1), labels = c("Not Send Signal", "Send Signal")),
+    p2_q2_binary = factor(p2_q2_binary, levels = c(0, 1), labels = c("Not Send Signal", "Send Signal")),
+    p2_q3_binary = factor(p2_q3_binary, levels = c(0, 1), labels = c("Not Send Signal", "Send Signal"))
   )
 
+# Move the specified columns to the front
+pilot_data_cleaned <- pilot_data_cleaned %>%
+  select("pid", "DefaultStatus", "BuySignal", "OverturnCondition", "wug_role", "name_wug", "Assigned_Family", "p2_q1_binary", "p2_q2_binary", "p2_q3_binary", "signal_sent", "Screen_1_binary", "Screen_2_binary", "Screen_3_binary", "Screen_4_binary", "Screen_5_binary", "Screen_6_binary", "num_not_donate", "num_donate", "moral_mean", everything())
+
 ```
+
+```{r message=FALSE}
+#| code-fold: true
+library(openxlsx)
+# Save the cleaned data to a new Excel file
+write.xlsx(pilot_data_cleaned, "full_experiment_data_cleaned.xlsx")
+```
+
