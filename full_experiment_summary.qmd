@@ -143,6 +143,45 @@ summary_p2 <- pilot_data %>%
 summary_p2$Response <- factor(summary_p2$Response, levels = c("1", "2"), labels = c("Yes", "No"))
 ```
 
+```{r message=FALSE}
+#| code-fold: true
+
+# Create a summary table of Part 2
+summary_table_p2 <- pilot_data %>%
+  group_by(DefaultStatus, BuySignal) %>%
+  summarise(
+    p2q1_1 = sum(p2_q1 == '1.0', na.rm = TRUE),
+    p2q1_2 = sum(p2_q1 == '2.0', na.rm = TRUE),
+    p2q2_1 = sum(p2_q2 == '1.0', na.rm = TRUE),
+    p2q2_2 = sum(p2_q2 == '2.0', na.rm = TRUE),
+    p2q3_1 = sum(p2_q3 == '1.0', na.rm = TRUE),
+    p2q3_2 = sum(p2_q3 == '2.0', na.rm = TRUE),
+    n_total = n()
+  ) %>%
+  # Calculate the percentage of Yes and No responses for each question
+  # Add % sign and round to 2 decimal places
+  mutate(
+    p2q1_1 = paste0(round(p2q1_1 / n_total * 100, 2), "%"),
+    p2q1_2 = paste0(round(p2q1_2 / n_total * 100, 2), "%"),
+    p2q2_1 = paste0(round(p2q2_1 / n_total * 100, 2), "%"),
+    p2q2_2 = paste0(round(p2q2_2 / n_total * 100, 2), "%"),
+    p2q3_1 = paste0(round(p2q3_1 / n_total * 100, 2), "%"),
+    p2q3_2 = paste0(round(p2q3_2 / n_total * 100, 2), "%")
+  ) %>%
+  rename(
+    "Sent Signal in P2Q1" = p2q1_1,
+    "Not Sent Signal in P2Q1" = p2q1_2,
+    "Sent Signal in P2Q2" = p2q2_1,
+    "Not Sent Signal in P2Q2" = p2q2_2,
+    "Sent Signal in P2Q3" = p2q3_1,
+    "Not Sent Signal in P2Q3" = p2q3_2,
+    "Total Participants" = n_total
+  )
+
+# Use kable to show the summary table
+kable(summary_table_p2, caption = "Summary of Part 2 for the whole Data")
+```
+
 ::: panel-tabset
 
 #### Donated, 25 Tokens, 1 Token
@@ -415,6 +454,104 @@ pilot_data <- pilot_data %>%
 #   ) %>%
 #   ungroup() %>%
 #   select(-ci)
+```
+
+```{r message=FALSE}
+#| code-fold: true
+
+# Keep Part 2 and Part 3 question responses
+pilot_data_filtered <- pilot_data %>%
+  select(DefaultStatus, BuySignal, OverturnCondition, WugRole, p2_q1, p2_q2, p2_q3, Screen_1_donated:Screen_6_notdonated, num_donate, num_not_donate)
+
+screen <- pilot_data_filtered %>%
+  rowwise() %>%
+  mutate(
+    num_not_donate_screen1 = sum(grepl("2.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen1 = sum(grepl("1.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen2 = sum(grepl("2.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen2 = sum(grepl("1.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen3 = sum(grepl("2.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen3 = sum(grepl("1.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen4 = sum(grepl("2.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen4 = sum(grepl("1.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen5 = sum(grepl("2.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen5 = sum(grepl("1.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen6 = sum(grepl("2.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen6 = sum(grepl("1.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+
+summary_screen <- screen %>%
+  group_by(DefaultStatus, BuySignal, OverturnCondition) %>%
+  summarise(
+    p2q1_1 = sum(p2_q1 == '1.0', na.rm = TRUE),
+    p2q1_2 = sum(p2_q1 == '2.0', na.rm = TRUE),
+    p2q2_1 = sum(p2_q2 == '1.0', na.rm = TRUE),
+    p2q2_2 = sum(p2_q2 == '2.0', na.rm = TRUE),
+    p2q3_1 = sum(p2_q3 == '1.0', na.rm = TRUE),
+    p2q3_2 = sum(p2_q3 == '2.0', na.rm = TRUE),
+    num_donate_1_9_signal = sum(num_donate_screen1),
+    num_not_donate_1_9_signal = sum(num_not_donate_screen1),
+    num_donate_1_9_no_signal = sum(num_donate_screen2),
+    num_not_donate_1_9_no_signal = sum(num_not_donate_screen2),
+    num_donate_5_5_signal = sum(num_donate_screen3),
+    num_not_donate_5_5_signal = sum(num_not_donate_screen3),
+    num_donate_5_5_no_signal = sum(num_donate_screen4),
+    num_not_donate_5_5_no_signal = sum(num_not_donate_screen4),
+    num_donate_9_1_signal = sum(num_donate_screen5),
+    num_not_donate_9_1_signal = sum(num_not_donate_screen5),
+    num_donate_9_1_no_signal = sum(num_donate_screen6),
+    num_not_donate_9_1_no_signal = sum(num_not_donate_screen6),
+
+    # Calculate the donation rate
+    per_donate_1_9_signal = num_donate_1_9_signal / (num_donate_1_9_signal + num_not_donate_1_9_signal),
+    per_donate_1_9_no_signal = num_donate_1_9_no_signal / (num_donate_1_9_no_signal + num_not_donate_1_9_no_signal),
+    per_donate_5_5_signal = num_donate_5_5_signal / (num_donate_5_5_signal + num_not_donate_5_5_signal),
+    per_donate_5_5_no_signal = num_donate_5_5_no_signal / (num_donate_5_5_no_signal + num_not_donate_5_5_no_signal),
+    per_donate_9_1_signal = num_donate_9_1_signal / (num_donate_9_1_signal + num_not_donate_9_1_signal),
+    per_donate_9_1_no_signal = num_donate_9_1_no_signal / (num_donate_9_1_no_signal + num_not_donate_9_1_no_signal),
+    
+    # Calculate the not donation rate
+    per_not_donate_1_9_signal = num_not_donate_1_9_signal / (num_donate_1_9_signal + num_not_donate_1_9_signal),
+    per_not_donate_1_9_no_signal = num_not_donate_1_9_no_signal / (num_donate_1_9_no_signal + num_not_donate_1_9_no_signal),
+    per_not_donate_5_5_signal = num_not_donate_5_5_signal / (num_donate_5_5_signal + num_not_donate_5_5_signal),
+    per_not_donate_5_5_no_signal = num_not_donate_5_5_no_signal / (num_donate_5_5_no_signal + num_not_donate_5_5_no_signal),
+    per_not_donate_9_1_signal = num_not_donate_9_1_signal / (num_donate_9_1_signal + num_not_donate_9_1_signal),
+    per_not_donate_9_1_no_signal = num_not_donate_9_1_no_signal / (num_donate_9_1_no_signal + num_not_donate_9_1_no_signal),
+    per_p2q1_signal = p2q1_1 / (p2q1_1 + p2q1_2),
+    per_p2q1_not_signal = p2q1_2 / (p2q1_1 + p2q1_2),
+    per_p2q2_signal = p2q2_1 / (p2q2_1 + p2q2_2),
+    per_p2q2_not_signal = p2q2_2 / (p2q2_1 + p2q2_2),
+    per_p2q3_signal = p2q3_1 / (p2q3_1 + p2q3_2),
+    per_p2q3_not_signal = p2q3_2 / (p2q3_1 + p2q3_2),
+    n_total = n()
+  ) %>%
+  ungroup()
+
+
+summary_table_p3 <- summary_screen %>%
+  select(DefaultStatus, BuySignal, OverturnCondition, per_donate_1_9_signal, per_donate_1_9_no_signal, per_donate_5_5_signal, per_donate_5_5_no_signal, per_donate_9_1_signal, per_donate_9_1_no_signal,n_total) %>%
+  mutate(
+    per_donate_1_9_signal = paste0(round(per_donate_1_9_signal * 100, 2), "%"),
+    per_donate_1_9_no_signal = paste0(round(per_donate_1_9_no_signal * 100, 2), "%"),
+    per_donate_5_5_signal = paste0(round(per_donate_5_5_signal * 100, 2), "%"),
+    per_donate_5_5_no_signal = paste0(round(per_donate_5_5_no_signal * 100, 2), "%"),
+    per_donate_9_1_signal = paste0(round(per_donate_9_1_signal * 100, 2), "%"),
+    per_donate_9_1_no_signal = paste0(round(per_donate_9_1_no_signal * 100, 2), "%")
+  ) %>%
+  rename(
+    "Screen 1 Donation Rate" = per_donate_1_9_signal,
+    "Screen 2 Donation Rate" = per_donate_1_9_no_signal,
+    "Screen 3 Donation Rate" = per_donate_5_5_signal,
+    "Screen 4 Donation Rate" = per_donate_5_5_no_signal,
+    "Screen 5 Donation Rate" = per_donate_9_1_signal,
+    "Screen 6 Donation Rate" = per_donate_9_1_no_signal,
+    "Total Participants" = n_total
+  )
+
+# Use kable to show the summary table
+kable(summary_table_p3, caption = "Summary of Part 3 for the whole Data")
 ```
 
 ::: panel-tabset
@@ -797,57 +934,8 @@ ggplotly(donation_rate_screen6_plot)
 ```{r message=FALSE}
 #| code-fold: true
 
-# Keep Part 2 and Part 3 question responses
-pilot_data_filtered <- pilot_data %>%
-  select(DefaultStatus, BuySignal, OverturnCondition, WugRole, p2_q1, p2_q2, p2_q3, Screen_1_donated:Screen_6_notdonated, num_donate, num_not_donate)
-
-screen <- pilot_data_filtered %>%
-  rowwise() %>%
-  mutate(
-    num_not_donate_screen1 = sum(grepl("2.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen1 = sum(grepl("1.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen2 = sum(grepl("2.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen2 = sum(grepl("1.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen3 = sum(grepl("2.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen3 = sum(grepl("1.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen4 = sum(grepl("2.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen4 = sum(grepl("1.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen5 = sum(grepl("2.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen5 = sum(grepl("1.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen6 = sum(grepl("2.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen6 = sum(grepl("1.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
-  ) %>%
-  ungroup()
-
-summary_screen <- screen %>%
-  group_by(DefaultStatus, BuySignal, OverturnCondition) %>%
-  summarise(
-    num_donate_1_9_signal = sum(num_donate_screen1),
-    num_not_donate_1_9_signal = sum(num_not_donate_screen1),
-    num_donate_1_9_no_signal = sum(num_donate_screen2),
-    num_not_donate_1_9_no_signal = sum(num_not_donate_screen2),
-    num_donate_5_5_signal = sum(num_donate_screen3),
-    num_not_donate_5_5_signal = sum(num_not_donate_screen3),
-    num_donate_5_5_no_signal = sum(num_donate_screen4),
-    num_not_donate_5_5_no_signal = sum(num_not_donate_screen4),
-    num_donate_9_1_signal = sum(num_donate_screen5),
-    num_not_donate_9_1_signal = sum(num_not_donate_screen5),
-    num_donate_9_1_no_signal = sum(num_donate_screen6),
-    num_not_donate_9_1_no_signal = sum(num_not_donate_screen6),
-
-    # Calculate the donation rate
-    per_donate_1_9_signal = num_donate_1_9_signal / (num_donate_1_9_signal + num_not_donate_1_9_signal),
-    per_donate_1_9_no_signal = num_donate_1_9_no_signal / (num_donate_1_9_no_signal + num_not_donate_1_9_no_signal),
-    per_donate_5_5_signal = num_donate_5_5_signal / (num_donate_5_5_signal + num_not_donate_5_5_signal),
-    per_donate_5_5_no_signal = num_donate_5_5_no_signal / (num_donate_5_5_no_signal + num_not_donate_5_5_no_signal),
-    per_donate_9_1_signal = num_donate_9_1_signal / (num_donate_9_1_signal + num_not_donate_9_1_signal),
-    per_donate_9_1_no_signal = num_donate_9_1_no_signal / (num_donate_9_1_no_signal + num_not_donate_9_1_no_signal)
-  ) %>%
-  ungroup()
-
-
 # Change to long format based on per_donate_1_9_sinal:per_donate_9_1_no_signal
-summary_screen <- summary_screen %>%
+summary_heatmap <- summary_screen %>%
   pivot_longer(cols = starts_with("per_donate"), names_to = "Treatment", values_to = "Donation_Rate") %>%
   mutate(
     Treatment = factor(Treatment, levels = c("per_donate_1_9_signal", "per_donate_1_9_no_signal", "per_donate_5_5_signal", "per_donate_5_5_no_signal", "per_donate_9_1_signal", "per_donate_9_1_no_signal")),
@@ -862,7 +950,7 @@ summary_screen <- summary_screen %>%
 ```{r weakconsent}
 #| code-fold: true
 
-summary_weakconsent <- summary_screen %>%
+summary_weakconsent <- summary_heatmap %>%
   filter((OverturnCondition == "1 token"))%>%
   filter(
     (DefaultStatus == 'donated' & BuySignal == "25 tokens" & Treatment == 'per_donate_9_1_signal') |
@@ -898,7 +986,7 @@ ggplot(summary_weakconsent, aes(x = BuySignal, y = Treatment, fill = Donation_Ra
 ```{r strongconsent}
 #| code-fold: true
 
-summary_strongconsent <- summary_screen %>%
+summary_strongconsent <- summary_heatmap %>%
   filter((OverturnCondition == "19 tokens"))%>%
   filter(
     (DefaultStatus == 'donated' & BuySignal == "25 tokens" & Treatment == 'per_donate_9_1_signal') |
@@ -930,6 +1018,128 @@ strong_consent_plot <- ggplot(summary_strongconsent, aes(x = BuySignal, y = Trea
 
 print(strong_consent_plot)
 ```
+:::
+
+### 5.3 Total Donation Rates
+
+Let's combine both Part 2 and Part 3 to calculate the total donation rates for each treatment arm.
+
+$$
+Donation Rate = PercentSignal \times DonationRateSignal + PercentNotSignal \times DonationRateNoSignal
+$$
+
+```{r message=FALSE}
+#| code-fold: true
+
+total_donation_summary <- summary_screen %>%
+  mutate(
+    total_donation_rate_1_9 = per_p2q1_signal * per_donate_1_9_signal + per_p2q1_not_signal * per_donate_1_9_no_signal,
+    total_donation_rate_5_5 = per_p2q2_signal * per_donate_5_5_signal + per_p2q2_not_signal * per_donate_5_5_no_signal,
+    total_donation_rate_9_1 = per_p2q3_signal * per_donate_9_1_signal + per_p2q3_not_signal * per_donate_9_1_no_signal
+  ) %>%
+  select(DefaultStatus, BuySignal, OverturnCondition, per_p2q1_signal, per_p2q1_not_signal, per_p2q2_signal, per_p2q2_not_signal, per_p2q3_signal, per_p2q3_not_signal, per_donate_1_9_signal, per_donate_1_9_no_signal,per_donate_5_5_signal, per_donate_5_5_no_signal, per_donate_9_1_signal, per_donate_9_1_no_signal, total_donation_rate_1_9, total_donation_rate_5_5, total_donation_rate_9_1) %>%
+  mutate(
+    per_p2q1_signal = paste0(round(per_p2q1_signal * 100, 2), "%"),
+    per_p2q1_not_signal = paste0(round(per_p2q1_not_signal * 100, 2), "%"),
+    per_p2q2_signal = paste0(round(per_p2q2_signal * 100, 2), "%"),
+    per_p2q2_not_signal = paste0(round(per_p2q2_not_signal * 100, 2), "%"),
+    per_p2q3_signal = paste0(round(per_p2q3_signal * 100, 2), "%"),
+    per_p2q3_not_signal = paste0(round(per_p2q3_not_signal * 100, 2), "%"),
+    per_donate_1_9_signal = paste0(round(per_donate_1_9_signal * 100, 2), "%"),
+    per_donate_1_9_no_signal = paste0(round(per_donate_1_9_no_signal * 100, 2), "%"),
+    per_donate_5_5_signal = paste0(round(per_donate_5_5_signal * 100, 2), "%"),
+    per_donate_5_5_no_signal = paste0(round(per_donate_5_5_no_signal * 100, 2), "%"),
+    per_donate_9_1_signal = paste0(round(per_donate_9_1_signal * 100, 2), "%"),
+    per_donate_9_1_no_signal = paste0(round(per_donate_9_1_no_signal * 100, 2), "%"),
+    total_donation_rate_1_9 = round(total_donation_rate_1_9 * 100, 2),
+    total_donation_rate_5_5 = round(total_donation_rate_5_5 * 100, 2),
+    total_donation_rate_9_1 = round(total_donation_rate_9_1 * 100, 2)
+  )
+
+# Change to long format based on total_donation_rate_1_9:total_donation_rate_9_1
+total_donation_summary_long <- total_donation_summary %>%
+  pivot_longer(cols = starts_with("total_donation_rate"), names_to = "Treatment", values_to = "Donation_Rate") %>%
+  mutate(
+    Treatment = factor(Treatment, levels = c("total_donation_rate_1_9", "total_donation_rate_5_5", "total_donation_rate_9_1"))
+  )
+```
+
+```{r message=FALSE}
+#| code-fold: true
+
+# Create a summary table for total donation rates
+total_donation_summary <- total_donation_summary %>%
+  rename(
+    "P2Q1 Send Signal" = per_p2q1_signal,
+    "P2Q1 Not Send Signal" = per_p2q1_not_signal,
+    "P2Q2 Send Signal" = per_p2q2_signal,
+    "P2Q2 Not Send Signal" = per_p2q2_not_signal,
+    "P2Q3 Send Signal" = per_p2q3_signal,
+    "P2Q3 Not Send Signal" = per_p2q3_not_signal,
+    "Screen 1 Donation Rate" = per_donate_1_9_signal,
+    "Screen 2 Donation Rate" = per_donate_1_9_no_signal,
+    "Screen 3 Donation Rate" = per_donate_5_5_signal,
+    "Screen 4 Donation Rate" = per_donate_5_5_no_signal,
+    "Screen 5 Donation Rate" = per_donate_9_1_signal,
+    "Screen 6 Donation Rate" = per_donate_9_1_no_signal,
+    "Total Donation Rate(1 donor, 9 non-donors)" = total_donation_rate_1_9,
+    "Total Donation Rate(5 donors, 5 non-donors)" = total_donation_rate_5_5,
+    "Total Donation Rate(9 donors, 1 non-donors)" = total_donation_rate_9_1
+  )
+
+# Use kable to show the summary table
+kable(total_donation_summary, caption = "Summary of Total Donation Rates")
+```
+
+::: panel-tabset
+
+#### Weak Consent Total Donation Rate
+
+```{r weakconsent_total_whole, message=FALSE}
+#| code-fold: true
+
+summary_weakconsent_total <- total_donation_summary_long %>%
+  filter((OverturnCondition == "1 token"))
+```
+
+```{r weakconsent_total_whole_plot, message=FALSE}
+#| code-fold: true
+
+weakconsent_total_plot <- ggplot(summary_weakconsent_total, aes(x = BuySignal, y = Treatment, fill = Donation_Rate)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue") +
+  geom_text(aes(label = round(Donation_Rate, 2)), color = "black") +
+  labs(title = "Total Donation Rate For Weak Consent", x = "Buy Signal", y = "Treatment", fill = "Donation Rate") +
+  facet_wrap(~ DefaultStatus) +  # Create facets by DefaultStatus
+  theme_minimal()
+
+ggplotly(weakconsent_total_plot)
+```
+
+#### Strong Consent Total Donation Rate
+
+```{r strongconsent_total_whole, message=FALSE}
+#| code-fold: true
+
+summary_strongconsent_total <- total_donation_summary_long %>%
+  filter((OverturnCondition == "19 tokens"))
+
+```
+
+```{r strongconsent_total_whole_plot, message=FALSE}
+#| code-fold: true
+
+strongconsent_total_plot <- ggplot(summary_strongconsent_total, aes(x = BuySignal, y = Treatment, fill = Donation_Rate)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue") +
+  geom_text(aes(label = round(Donation_Rate, 2)), color = "black") +
+  labs(title = "Total Donation Rate For Strong Consent", x = "Buy Signal", y = "Treatment", fill = "Donation Rate") +
+  facet_wrap(~ DefaultStatus) +  # Create facets by DefaultStatus
+  theme_minimal()
+
+ggplotly(strongconsent_total_plot)
+```
+
 :::
 
 ## 6. Deeper Data Cleaning
@@ -1907,7 +2117,7 @@ print(strong_consent_plot_cleaned)
 ```
 :::
 
-## 7. Total Donation Rates
+### 6.5 Total Donation Rates for Cleaned Data
 
 Last but not least, we will combine both Part 2 and Part 3 to calculate the total donation rates for each treatment arm.
 
@@ -1918,7 +2128,7 @@ $$
 ```{r message=FALSE}
 #| code-fold: true
 
-total_donation_summary <- summary_screen_cleaned %>%
+total_donation_summary_cleaned <- summary_screen_cleaned %>%
   mutate(
     total_donation_rate_1_9 = per_p2q1_signal * per_donate_1_9_signal + per_p2q1_not_signal * per_donate_1_9_no_signal,
     total_donation_rate_5_5 = per_p2q2_signal * per_donate_5_5_signal + per_p2q2_not_signal * per_donate_5_5_no_signal,
@@ -1944,7 +2154,7 @@ total_donation_summary <- summary_screen_cleaned %>%
   )
 
 # Change to long format based on total_donation_rate_1_9:total_donation_rate_9_1
-total_donation_summary_long <- total_donation_summary %>%
+total_donation_summary_cleaned_long <- total_donation_summary_cleaned %>%
   pivot_longer(cols = starts_with("total_donation_rate"), names_to = "Treatment", values_to = "Donation_Rate") %>%
   mutate(
     Treatment = factor(Treatment, levels = c("total_donation_rate_1_9", "total_donation_rate_5_5", "total_donation_rate_9_1"))
@@ -1955,7 +2165,7 @@ total_donation_summary_long <- total_donation_summary %>%
 #| code-fold: true
 
 # Create a summary table for total donation rates
-total_donation_summary <- total_donation_summary %>%
+total_donation_summary_cleaned <- total_donation_summary_cleaned %>%
   rename(
     "P2Q1 Send Signal" = per_p2q1_signal,
     "P2Q1 Not Send Signal" = per_p2q1_not_signal,
@@ -1975,7 +2185,7 @@ total_donation_summary <- total_donation_summary %>%
   )
 
 # Use kable to show the summary table
-kable(total_donation_summary, caption = "Summary of Total Donation Rates")
+kable(total_donation_summary_cleaned, caption = "Summary of Total Donation Rates for Cleaned Data")
 ```
 
 ::: panel-tabset
@@ -1985,14 +2195,14 @@ kable(total_donation_summary, caption = "Summary of Total Donation Rates")
 ```{r weakconsent_total, message=FALSE}
 #| code-fold: true
 
-summary_weakconsent_total <- total_donation_summary_long %>%
+summary_weakconsent_total_cleaned <- total_donation_summary_cleaned_long %>%
   filter((OverturnCondition == "1 token"))
 ```
 
 ```{r weakconsent_total_plot, message=FALSE}
 #| code-fold: true
 
-weakconsent_total_plot <- ggplot(summary_weakconsent_total, aes(x = BuySignal, y = Treatment, fill = Donation_Rate)) +
+weakconsent_total_cleaned_plot <- ggplot(summary_weakconsent_total_cleaned, aes(x = BuySignal, y = Treatment, fill = Donation_Rate)) +
   geom_tile(color = "white") +
   scale_fill_gradient(low = "lightblue", high = "darkblue") +
   geom_text(aes(label = round(Donation_Rate, 2)), color = "black") +
@@ -2000,7 +2210,7 @@ weakconsent_total_plot <- ggplot(summary_weakconsent_total, aes(x = BuySignal, y
   facet_wrap(~ DefaultStatus) +  # Create facets by DefaultStatus
   theme_minimal()
 
-ggplotly(weakconsent_total_plot)
+ggplotly(weakconsent_total_cleaned_plot)
 ```
 
 #### Strong Consent Total Donation Rate
@@ -2008,7 +2218,7 @@ ggplotly(weakconsent_total_plot)
 ```{r strongconsent_total, message=FALSE}
 #| code-fold: true
 
-summary_strongconsent_total <- total_donation_summary_long %>%
+summary_strongconsent_total_cleaned <- total_donation_summary_cleaned_long %>%
   filter((OverturnCondition == "19 tokens"))
 
 ```
@@ -2016,7 +2226,7 @@ summary_strongconsent_total <- total_donation_summary_long %>%
 ```{r strongconsent_total_plot, message=FALSE}
 #| code-fold: true
 
-strongconsent_total_plot <- ggplot(summary_strongconsent_total, aes(x = BuySignal, y = Treatment, fill = Donation_Rate)) +
+strongconsent_total_cleaned_plot <- ggplot(summary_strongconsent_total_cleaned, aes(x = BuySignal, y = Treatment, fill = Donation_Rate)) +
   geom_tile(color = "white") +
   scale_fill_gradient(low = "lightblue", high = "darkblue") +
   geom_text(aes(label = round(Donation_Rate, 2)), color = "black") +
@@ -2024,7 +2234,7 @@ strongconsent_total_plot <- ggplot(summary_strongconsent_total, aes(x = BuySigna
   facet_wrap(~ DefaultStatus) +  # Create facets by DefaultStatus
   theme_minimal()
 
-ggplotly(strongconsent_total_plot)
+ggplotly(strongconsent_total_cleaned_plot)
 ```
 
 :::
