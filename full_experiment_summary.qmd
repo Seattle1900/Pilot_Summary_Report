@@ -29,7 +29,7 @@ pilot_data <- read_excel("Opt_Experiment_Full.xlsx")
 pilot_data <- pilot_data[order(pilot_data$StartDate), ]
 
 # Keep the rows from 474 to 635
-pilot_data <- pilot_data[716:1715, ]
+pilot_data <- pilot_data[716:1720, ]
 
 
 # payment_pilot3 <- pilot_data[-c(3:286), ]
@@ -118,12 +118,12 @@ summary_p2 <- pilot_data %>%
   ) %>%
   group_by(DefaultStatus, BuySignal, OverturnCondition, WugRole) %>%
   summarise(
-    p2q1_1 = sum(p2_q1 == '1', na.rm = TRUE),
-    p2q1_2 = sum(p2_q1 == '2', na.rm = TRUE),
-    p2q2_1 = sum(p2_q2 == '1', na.rm = TRUE),
-    p2q2_2 = sum(p2_q2 == '2', na.rm = TRUE),
-    p2q3_1 = sum(p2_q3 == '1', na.rm = TRUE),
-    p2q3_2 = sum(p2_q3 == '2', na.rm = TRUE),
+    p2q1_1 = sum(p2_q1 == '1.0', na.rm = TRUE),
+    p2q1_2 = sum(p2_q1 == '2.0', na.rm = TRUE),
+    p2q2_1 = sum(p2_q2 == '1.0', na.rm = TRUE),
+    p2q2_2 = sum(p2_q2 == '2.0', na.rm = TRUE),
+    p2q3_1 = sum(p2_q3 == '1.0', na.rm = TRUE),
+    p2q3_2 = sum(p2_q3 == '2.0', na.rm = TRUE),
     n_total = n()
   ) %>%
   pivot_longer(cols = starts_with("p2q"), 
@@ -383,8 +383,8 @@ In this section, I'll show the donation rates for each treatment arm.
 pilot_data <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate = sum(grepl("2", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate = sum(grepl("1", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate = sum(grepl("2.0", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate = sum(grepl("1.0", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -430,8 +430,8 @@ pilot_data <- pilot_data %>%
 screen_1 <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen1 = sum(grepl("2", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen1 = sum(grepl("1", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen1 = sum(grepl("2.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen1 = sum(grepl("1.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -508,8 +508,8 @@ ggplotly(donation_rate_screen1_plot)
 screen_2 <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen2 = sum(grepl("2", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen2 = sum(grepl("1", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen2 = sum(grepl("2.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen2 = sum(grepl("1.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -569,8 +569,8 @@ ggplotly(donation_rate_screen2_plot)
 screen_3 <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen3 = sum(grepl("2", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen3 = sum(grepl("1", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen3 = sum(grepl("2.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen3 = sum(grepl("1.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -628,8 +628,8 @@ ggplotly(donation_rate_screen3_plot)
 screen_4 <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen4 = sum(grepl("2", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen4 = sum(grepl("1", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen4 = sum(grepl("2.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen4 = sum(grepl("1.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -686,8 +686,8 @@ ggplotly(donation_rate_screen4_plot)
 screen_5 <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen5 = sum(grepl("2", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen5 = sum(grepl("1", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen5 = sum(grepl("2.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen5 = sum(grepl("1.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -744,8 +744,8 @@ ggplotly(donation_rate_screen5_plot)
 screen_6 <- pilot_data %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen6 = sum(grepl("2", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen6 = sum(grepl("1", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen6 = sum(grepl("2.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen6 = sum(grepl("1.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -804,18 +804,18 @@ pilot_data_filtered <- pilot_data %>%
 screen <- pilot_data_filtered %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen1 = sum(grepl("2", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen1 = sum(grepl("1", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen2 = sum(grepl("2", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen2 = sum(grepl("1", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen3 = sum(grepl("2", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen3 = sum(grepl("1", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen4 = sum(grepl("2", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen4 = sum(grepl("1", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen5 = sum(grepl("2", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen5 = sum(grepl("1", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen6 = sum(grepl("2", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen6 = sum(grepl("1", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen1 = sum(grepl("2.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen1 = sum(grepl("1.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen2 = sum(grepl("2.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen2 = sum(grepl("1.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen3 = sum(grepl("2.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen3 = sum(grepl("1.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen4 = sum(grepl("2.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen4 = sum(grepl("1.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen5 = sum(grepl("2.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen5 = sum(grepl("1.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen6 = sum(grepl("2.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen6 = sum(grepl("1.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -955,7 +955,7 @@ pilot_data <- pilot_data %>%
   ) %>%
   rowwise() %>%
   mutate(
-    signal_sent = ifelse(p2_q1 == "1" | p2_q2 == "1" | p2_q3 == "1", 1, 0)
+    signal_sent = ifelse(p2_q1 == "1.0" | p2_q2 == "1.0" | p2_q3 == "1.0", 1, 0)
   ) %>%
   ungroup()
 
@@ -1029,12 +1029,12 @@ summary_p2_cleaned <- pilot_data_cleaned %>%
   ) %>%
   group_by(DefaultStatus, BuySignal, OverturnCondition, WugRole) %>%
   summarise(
-    p2q1_1 = sum(p2_q1 == '1', na.rm = TRUE),
-    p2q1_2 = sum(p2_q1 == '2', na.rm = TRUE),
-    p2q2_1 = sum(p2_q2 == '1', na.rm = TRUE),
-    p2q2_2 = sum(p2_q2 == '2', na.rm = TRUE),
-    p2q3_1 = sum(p2_q3 == '1', na.rm = TRUE),
-    p2q3_2 = sum(p2_q3 == '2', na.rm = TRUE),
+    p2q1_1 = sum(p2_q1 == '1.0', na.rm = TRUE),
+    p2q1_2 = sum(p2_q1 == '2.0', na.rm = TRUE),
+    p2q2_1 = sum(p2_q2 == '1.0', na.rm = TRUE),
+    p2q2_2 = sum(p2_q2 == '2.0', na.rm = TRUE),
+    p2q3_1 = sum(p2_q3 == '1.0', na.rm = TRUE),
+    p2q3_2 = sum(p2_q3 == '2.0', na.rm = TRUE),
     n_total = n()
   ) %>%
   pivot_longer(cols = starts_with("p2q"), 
@@ -1061,12 +1061,12 @@ summary_p2_cleaned$Response <- factor(summary_p2_cleaned$Response, levels = c("1
 summary_table_p2_cleaned <- pilot_data_cleaned %>%
   group_by(DefaultStatus, BuySignal) %>%
   summarise(
-    p2q1_1 = sum(p2_q1 == '1', na.rm = TRUE),
-    p2q1_2 = sum(p2_q1 == '2', na.rm = TRUE),
-    p2q2_1 = sum(p2_q2 == '1', na.rm = TRUE),
-    p2q2_2 = sum(p2_q2 == '2', na.rm = TRUE),
-    p2q3_1 = sum(p2_q3 == '1', na.rm = TRUE),
-    p2q3_2 = sum(p2_q3 == '2', na.rm = TRUE),
+    p2q1_1 = sum(p2_q1 == '1.0', na.rm = TRUE),
+    p2q1_2 = sum(p2_q1 == '2.0', na.rm = TRUE),
+    p2q2_1 = sum(p2_q2 == '1.0', na.rm = TRUE),
+    p2q2_2 = sum(p2_q2 == '2.0', na.rm = TRUE),
+    p2q3_1 = sum(p2_q3 == '1.0', na.rm = TRUE),
+    p2q3_2 = sum(p2_q3 == '2.0', na.rm = TRUE),
     n_total = n()
   ) %>%
   # Calculate the percentage of Yes and No responses for each question
@@ -1331,8 +1331,8 @@ In this section, I'll show the donation rates for each treatment arm.
 pilot_data_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate = sum(grepl("2", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate = sum(grepl("1", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate = sum(grepl("2.0", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate = sum(grepl("1.0", c_across(Screen_1_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1375,30 +1375,30 @@ pilot_data_filtered_cleaned <- pilot_data_cleaned %>%
 screen_cleaned <- pilot_data_filtered_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen1 = sum(grepl("2", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen1 = sum(grepl("1", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen2 = sum(grepl("2", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen2 = sum(grepl("1", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen3 = sum(grepl("2", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen3 = sum(grepl("1", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen4 = sum(grepl("2", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen4 = sum(grepl("1", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen5 = sum(grepl("2", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen5 = sum(grepl("1", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_not_donate_screen6 = sum(grepl("2", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen6 = sum(grepl("1", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen1 = sum(grepl("2.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen1 = sum(grepl("1.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen2 = sum(grepl("2.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen2 = sum(grepl("1.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen3 = sum(grepl("2.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen3 = sum(grepl("1.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen4 = sum(grepl("2.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen4 = sum(grepl("1.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen5 = sum(grepl("2.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen5 = sum(grepl("1.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_not_donate_screen6 = sum(grepl("2.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen6 = sum(grepl("1.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
 summary_screen_cleaned <- screen_cleaned %>%
   group_by(DefaultStatus, BuySignal, OverturnCondition) %>%
   summarise(
-    p2q1_1 = sum(p2_q1 == '1', na.rm = TRUE),
-    p2q1_2 = sum(p2_q1 == '2', na.rm = TRUE),
-    p2q2_1 = sum(p2_q2 == '1', na.rm = TRUE),
-    p2q2_2 = sum(p2_q2 == '2', na.rm = TRUE),
-    p2q3_1 = sum(p2_q3 == '1', na.rm = TRUE),
-    p2q3_2 = sum(p2_q3 == '2', na.rm = TRUE),
+    p2q1_1 = sum(p2_q1 == '1.0', na.rm = TRUE),
+    p2q1_2 = sum(p2_q1 == '2.0', na.rm = TRUE),
+    p2q2_1 = sum(p2_q2 == '1.0', na.rm = TRUE),
+    p2q2_2 = sum(p2_q2 == '2.0', na.rm = TRUE),
+    p2q3_1 = sum(p2_q3 == '1.0', na.rm = TRUE),
+    p2q3_2 = sum(p2_q3 == '2.0', na.rm = TRUE),
     num_donate_1_9_signal = sum(num_donate_screen1),
     num_not_donate_1_9_signal = sum(num_not_donate_screen1),
     num_donate_1_9_no_signal = sum(num_donate_screen2),
@@ -1474,8 +1474,8 @@ kable(summary_table_p3_cleaned, caption = "Summary of Part 3 for Cleaned Data")
 screen_1_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen1 = sum(grepl("2", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen1 = sum(grepl("1", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen1 = sum(grepl("2.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen1 = sum(grepl("1.0", c_across(Screen_1_donated:Screen_1_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1532,8 +1532,8 @@ ggplotly(donation_rate_screen1_plot_cleaned)
 screen_2_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen2 = sum(grepl("2", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen2 = sum(grepl("1", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen2 = sum(grepl("2.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen2 = sum(grepl("1.0", c_across(Screen_2_donated:Screen_2_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1593,8 +1593,8 @@ ggplotly(donation_rate_screen2_plot_cleaned)
 screen_3_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen3 = sum(grepl("2", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen3 = sum(grepl("1", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen3 = sum(grepl("2.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen3 = sum(grepl("1.0", c_across(starts_with("Screen_3")), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1652,8 +1652,8 @@ ggplotly(donation_rate_screen3_plot_cleaned)
 screen_4_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen4 = sum(grepl("2", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen4 = sum(grepl("1", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen4 = sum(grepl("2.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen4 = sum(grepl("1.0", c_across(Screen_4_donated:Screen_4_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1710,8 +1710,8 @@ ggplotly(donation_rate_screen4_plot_cleaned)
 screen_5_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen5 = sum(grepl("2", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen5 = sum(grepl("1", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen5 = sum(grepl("2.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen5 = sum(grepl("1.0", c_across(Screen_5_donated:Screen_5_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -1768,8 +1768,8 @@ ggplotly(donation_rate_screen5_plot_cleaned)
 screen_6_cleaned <- pilot_data_cleaned %>%
   rowwise() %>%
   mutate(
-    num_not_donate_screen6 = sum(grepl("2", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
-    num_donate_screen6 = sum(grepl("1", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
+    num_not_donate_screen6 = sum(grepl("2.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE),
+    num_donate_screen6 = sum(grepl("1.0", c_across(Screen_6_donated:Screen_6_notdonated), ignore.case = TRUE), na.rm = TRUE)
   ) %>%
   ungroup()
 
@@ -2028,3 +2028,79 @@ ggplotly(strongconsent_total_plot)
 ```
 
 :::
+
+## Extra: Data Cleaning for Regressions
+
+```{r message=FALSE}
+#| code-fold: true
+
+# Variables we may need: pid, name_wug, p2_q1, p2_q2, p2_q3, Screen_1_donated:Screen_6_notdonated, Assigned_Family, DefaultStatus, BuySignal, OverturnCondition, wug_role, num_not_donate, num_donate, moral_mean, signal_sent
+
+# Move the specified columns to the front
+pilot_data_cleaned <- pilot_data_cleaned %>%
+  select("pid", "name_wug", "p2_q1", "p2_q2", "p2_q3", "Screen_1_donated", "Screen_1_notdonated", 
+         "Screen_2_donated", "Screen_2_notdonated", starts_with("Screen_3"), "Screen_4_donated", 
+         "Screen_4_notdonated", "Screen_5_donated", "Screen_5_notdonated", "Screen_6_donated", 
+         "Screen_6_notdonated", "Assigned_Family", "DefaultStatus", "BuySignal", "OverturnCondition", 
+         "wug_role", "num_not_donate", "num_donate", "moral_mean", "signal_sent", everything())
+
+# Create new binary variables for Part 2 and Part 3
+pilot_data_cleaned <- pilot_data_cleaned %>%
+  rowwise() %>%
+  mutate(
+    Screen_1_binary = case_when(
+      Screen_1_donated == '1.0' | Screen_1_notdonated == '1.0' ~ 1,
+      TRUE ~ 0
+    ),
+    Screen_2_binary = case_when(
+      Screen_2_donated == '1.0' | Screen_2_notdonated == '1.0' ~ 1,
+      TRUE ~ 0
+    ),
+    Screen_3_binary = case_when(
+      sum(grepl("1.0", c_across(starts_with("Screen_3")), ignore.case = TRUE)) > 0 ~ 1,
+      TRUE ~ 0
+    ),
+    Screen_4_binary = case_when(
+      Screen_4_donated == '1.0' | Screen_4_notdonated == '1.0' ~ 1,
+      TRUE ~ 0
+    ),
+    Screen_5_binary = case_when(
+      Screen_5_donated == '1.0' | Screen_5_notdonated == '1.0' ~ 1,
+      TRUE ~ 0
+    ),
+    Screen_6_binary = case_when(
+      Screen_6_donated == '1.0' | Screen_6_notdonated == '1.0' ~ 1,
+      TRUE ~ 0
+    ),
+    p2_q1_binary = case_when(
+      p2_q1 == "1.0" ~ 1,
+      TRUE ~ 0
+    ),
+    p2_q2_binary = case_when(
+      p2_q2 == "1.0" ~ 1,
+      TRUE ~ 0
+    ),
+    p2_q3_binary = case_when(
+      p2_q3 == "1.0" ~ 1,
+      TRUE ~ 0
+    )
+  ) %>%
+  ungroup()
+
+# Change the above binary variables to factors
+pilot_data_cleaned <- pilot_data_cleaned %>%
+  mutate(
+    Screen_1_binary = factor(Screen_1_binary, levels = c(0, 1), labels = c("Not donate", "Donate")),
+    Screen_2_binary = factor(Screen_2_binary, levels = c(0, 1), labels = c("Not donate", "Donate")),
+    Screen_3_binary = factor(Screen_3_binary, levels = c(0, 1), labels = c("Not donate", "Donate")),
+    Screen_4_binary = factor(Screen_4_binary, levels = c(0, 1), labels = c("Not donate", "Donate")),
+    Screen_5_binary = factor(Screen_5_binary, levels = c(0, 1), labels = c("Not donate", "Donate")),
+    Screen_6_binary = factor(Screen_6_binary, levels = c(0, 1), labels = c("Not donate", "Donate")),
+    
+    # Do it for Part 2 questions as well
+    p2_q1 = factor(p2_q1, levels = c(0, 1), labels = c("Not Send Signal", "Send Signal")),
+    p2_q2 = factor(p2_q2, levels = c(0, 1), labels = c("Not Send Signal", "Send Signal")),
+    p2_q3 = factor(p2_q3, levels = c(0, 1), labels = c("Not Send Signal", "Send Signal"))
+  )
+
+```
